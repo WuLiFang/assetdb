@@ -1,0 +1,23 @@
+
+import logging
+import sys
+
+from assetdb.app import serve
+from assetdb.database.util import setup
+from assetdb.view import APP
+from util import set_debug_settings
+
+
+def main():
+    logging.basicConfig(level=logging.DEBUG)
+    set_debug_settings()
+    setup()
+
+    APP.run('localhost', 6001, True)
+
+    # APP.debug = True
+    # serve(('localhost', 6001), log=sys.stdout)
+
+
+if __name__ == '__main__':
+    main()

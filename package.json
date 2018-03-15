@@ -1,0 +1,33 @@
+{
+  "name": "assetdb",
+  "version": "0.1.0",
+  "description": "Asset database app for WuLiFang studio",
+  "main": "src/index.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.10",
+    "node-sass": "^4.7.2",
+    "pug": "^2.0.1",
+    "sass": "^1.0.0-beta.5.3",
+    "sass-loader": "^6.0.7",
+    "ts-loader": "^4.0.1",
+    "typescript": "^2.7.2",
+    "vue": "^2.5.16",
+    "vue-loader": "^14.2.1",
+    "vue-template-compiler": "^2.5.16",
+    "vue-resource": "https://github.com/NateScarlet/vue-resource/tarball/1.5.1",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
+  },
+  "scripts": {
+    "build": "webpack --mode development",
+    "debug_server": "pipenv run python lib/assetdb/tests/run_debug_server.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NateScarlet@Gmail.com"
+}
