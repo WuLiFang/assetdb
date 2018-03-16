@@ -1,15 +1,15 @@
 <template lang="pug">
-  div {{ name }}
+  div {{ category.name }}
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 
 export default Vue.extend({
-  props: ["name"],
+  props: ["category"],
   data() {
     return {
-      name: this.name
+      category: this.category
     };
   }
 });
