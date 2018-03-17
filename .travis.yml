@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"
+install:
+  - pip install pipenv
+  - pipenv --version
+  - pipenv install
+cache:
+  - pip
+script:
+  - pipenv run python -m unittest discover -v -s ./lib/assetdb/tests -p test_*.py
