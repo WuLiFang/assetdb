@@ -1,12 +1,12 @@
 <template lang="pug">
-option(:label="category.label") {{ category.name }}
+option(:label="category.name") {{ category.id }}
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 
 export default Vue.extend({
-  props: ["category"],
+  props: ["category"]
 });
 </script>
 
