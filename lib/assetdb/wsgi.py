@@ -1,8 +1,10 @@
+"""Assetdb WSGI server.  """
+
 import logging
 
 from gevent.wsgi import WSGIServer
 
-from .view import APP
+from .views import APP
 
 LOGGER = logging.getLogger('wlf.assetdb')
 

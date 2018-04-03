@@ -2,9 +2,9 @@
 import logging
 import sys
 
-from assetdb.app import serve
 from assetdb.database.util import setup
-from assetdb.view import APP
+from assetdb.views import APP
+from assetdb.wsgi import serve
 from util import set_debug_settings
 
 
