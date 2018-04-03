@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+    mode: 'development',
     entry: './src/index.ts',
     output: {
         filename: 'bundle.js',
@@ -36,10 +37,10 @@ module.exports = {
         },
     },
     devServer: {
-        contentBase: path.join(__dirname, "lib/assetdb/templates"),
+        contentBase: path.join(__dirname, 'lib/assetdb/templates'),
         proxy: {
-            "/api": "http://localhost:6001",
+            '/api': 'http://localhost:6001',
         },
-        publicPath: "/static/"
+        publicPath: '/static/',
     },
 };

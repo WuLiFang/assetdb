@@ -1,5 +1,5 @@
 <template lang="pug">
-  div {{ category.name }}
+option(:label="category.label") {{ category.name }}
 </template>
 
 <script lang="ts">
@@ -7,14 +7,13 @@ import Vue from "vue";
 
 export default Vue.extend({
   props: ["category"],
-  data() {
-    return {
-      category: this.category
-    };
-  }
 });
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
+div {
+  background-color: grey;
+  max-width: 200px;
+}
 </style>
  
