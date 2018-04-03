@@ -35,4 +35,11 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js',
         },
     },
+    devServer: {
+        contentBase: path.join(__dirname, "lib/assetdb/templates"),
+        proxy: {
+            "/api": "http://localhost:6001",
+        },
+        publicPath: "/static/"
+    },
 };

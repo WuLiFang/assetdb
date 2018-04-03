@@ -19,15 +19,17 @@
     "typescript": "^2.7.2",
     "vue": "^2.5.16",
     "vue-loader": "^14.2.1",
-    "vue-template-compiler": "^2.5.16",
     "vue-resource": "https://github.com/NateScarlet/vue-resource/tarball/1.5.1",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12"
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1"
   },
   "scripts": {
     "build": "webpack --mode development",
     "debug_server": "pipenv run python lib/assetdb/tests/run_debug_server.py",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "webpack-dev-server"
   },
   "author": "NateScarlet@Gmail.com"
 }
