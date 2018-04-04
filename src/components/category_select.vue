@@ -3,19 +3,19 @@ span
   label 分类
   select(@change="route" v-model="selected")
     category-option(v-for="category in categories" :key="category.id" :category="category")
-  button(@click="this.$root.update_categories") 刷新
+  button(@click="update") 刷新
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import CategoryOption from "./category_option.vue";
 import { Category, CategoryStorage } from "../model";
+import { UPDATE_CATEGORIES } from "../mutation-types";
 
 export default Vue.extend({
   data() {
     return {
-      selected: this.$route.params["id"],
-      categories: <CategoryStorage>this.$root.$data["categories"]
+      selected: this.$route.params["id"]
     };
   },
   methods: {
@@ -24,6 +24,14 @@ export default Vue.extend({
         return value.id == this.selected;
       })[0];
       this.$router.push(category.url());
+    },
+    update() {
+      this.$store.commit(UPDATE_CATEGORIES);
+    }
+  },
+  computed: {
+    categories(): CategoryStorage {
+      return this.$store.state.categories;
     }
   },
   components: {

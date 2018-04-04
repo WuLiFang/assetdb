@@ -1,9 +1,9 @@
 export class CategoryStorage extends Array<Category>{
-    select(id: string) {
+    select = (id: string) => {
         return this.filter(
             (value) => { return value.id == id }
         )[0]
-    }
+    };
 }
 export class Category {
     constructor(
@@ -12,10 +12,10 @@ export class Category {
         public name: string,
         public path: string) {
     }
-    url(): string {
+    url = (): string => {
         return `/category/${this.id}/${this.name}`
     }
-    isTopLevel(): boolean {
+    isTopLevel = (): boolean => {
         return !this.parent_id
     }
     static from_data(data: Array<string>) {

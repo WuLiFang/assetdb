@@ -5,7 +5,7 @@
     h1 {{category.name}}
     div ID: {{category.id}}
     div 路径: {{category.path}}
-    ul(v-for='childCategory in childCategories',:key='category.id')
+    ul(v-for='childCategory in childCategories', :key='childCategory.id')
       router-link(:to="childCategory.url()")
         li {{childCategory.name}}
     asset-view(:category="category")
@@ -17,21 +17,15 @@ import { Category, CategoryStorage } from "../model";
 import AssetView from "./asset_view.vue";
 
 export default Vue.extend({
-  data() {
-    return {
-      categories: <CategoryStorage>this.$root.$data["categories"]
-    };
-  },
   computed: {
+    categories(): CategoryStorage {
+      return this.$store.state.categories;
+    },
     id(): string {
       return this.$route.params.id;
     },
     category(): Category {
-      console.log(this.id);
-      return this.categories.filter(value => {
-        console.log(value);
-        return value.id == this.id;
-      })[0];
+      return this.categories.select(this.id);
     },
     childCategories(): Category[] {
       return this.categories.filter(value => {
@@ -39,9 +33,7 @@ export default Vue.extend({
       });
     },
     parentCategory(): Category {
-      return this.categories.filter(value => {
-        return value.id == this.category.parent_id;
-      })[0];
+      return this.categories.select(this.category.parent_id);
     }
   },
   components: {
