@@ -14,7 +14,7 @@ Vue.use(VueRouter);
 
 const routes = [
     { path: '/', component: IndexViewComponent },
-    { path: '/category/:id/:name', component: CategoryViewComponent },
+    { path: '/category/:id', component: CategoryViewComponent, alias: '/category/:id/:name' },
 ]
 const router = new VueRouter({ routes })
 const store = new Vuex.Store(
