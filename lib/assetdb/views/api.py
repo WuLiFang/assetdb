@@ -59,19 +59,18 @@ class Category(object):
         return jsonify(ret)
 
     @staticmethod
-    @APP.route(f'{url}/list/<id_>', methods=('GET',))
-    def get_asset_list(id_):
-        """Get category from database with specific id.   """
+    @APP.route(f'{url}/<id_>/assets', methods=('GET',))
+    def get_assets(id_):
+        """Get assets from database with specific category_id.   """
 
         with get_conn() as conn:
             c = conn.cursor()
             c.execute(
-                f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME} WHERE category_id=?',
+                f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME} '
+                f'WHERE category_id=?',
                 (id_,))
-            ret = c.fetchone()
+            ret = c.fetchall()
         LOGGER.debug(ret)
-        if not ret:
-            abort(404, 'No such category.')
         return jsonify(ret)
 
     @staticmethod

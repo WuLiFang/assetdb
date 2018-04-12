@@ -9,7 +9,10 @@ from util import set_debug_settings
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format=('%(levelname)-6s[%(asctime)s]:'
+                '%(filename)s:%(lineno)d:%(funcName)s: %(message)s'))
     set_debug_settings()
     setup()
 
