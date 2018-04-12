@@ -15,7 +15,7 @@ import { UPDATE_CATEGORIES } from "../mutation-types";
 export default Vue.extend({
   data() {
     return {
-      selected: this.$route.params["id"]
+      selected: this.$route.params.id
     };
   },
   methods: {
@@ -27,11 +27,19 @@ export default Vue.extend({
     },
     update() {
       this.$store.commit(UPDATE_CATEGORIES);
+    },
+    matchCurrent() {
+      this.selected = this.$route.params.id;
     }
   },
   computed: {
     categories(): CategoryStorage {
       return this.$store.state.categories;
+    }
+  },
+  watch: {
+    $route() {
+      this.matchCurrent();
     }
   },
   components: {

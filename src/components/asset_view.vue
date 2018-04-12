@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     table(v-if="assets.length > 0")
-      div {{category.name}} assets:
+      div {{category.name}} 资产:
         ul(v-for='asset in assets', :key='asset.id')
           li {{asset.name}}
     div(v-else, v-html="message") 
