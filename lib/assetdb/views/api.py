@@ -1,15 +1,20 @@
 """Assetdb RESTful API.  """
 
 import logging
-import sqlite3
 
-from flask import Flask, abort, g, jsonify, render_template, request
+from flask import abort, jsonify, request
 
 from ..database import asset, category
 from .app import APP
 from .connection import get_conn
 
 LOGGER = logging.getLogger(__name__)
+
+
+def dispatch(cls, *args, **kwargs):
+    """Dispatch function call to class.  """
+
+    return getattr(cls, request.method.lower())(*args, **kwargs)
 
 
 class Category(object):
@@ -19,17 +24,8 @@ class Category(object):
 
     @staticmethod
     @APP.route(url, endpoint='Category', methods=('GET', 'POST', 'PUT', 'DELETE'))
-    def dispatch():
-        """Dispatch function call.  """
-
-        cls = Category
-        func = {
-            'GET': cls.get,
-            'POST': cls.post,
-            'PUT': cls.put,
-            'DELETE': cls.delete
-        }[request.method]
-        return func()
+    def _dispatch():
+        return dispatch(Category)
 
     @staticmethod
     def get():
@@ -42,9 +38,19 @@ class Category(object):
         LOGGER.debug(ret)
         return jsonify(ret)
 
+
+class CategoryFromId(object):
+    """API for category from id.  """
+
+    url = '/api/category/<id_>'
+
     @staticmethod
-    @APP.route(f'{url}/<id_>', methods=('GET',))
-    def get_from_id(id_):
+    @APP.route(url, endpoint='CategoryFromId', methods=('GET', 'POST', 'PUT', 'DELETE'))
+    def _dispatch(id_):
+        return dispatch(CategoryFromId, id_)
+
+    @staticmethod
+    def get(id_):
         """Get category from database with specific id.   """
 
         with get_conn() as conn:
@@ -59,7 +65,7 @@ class Category(object):
         return jsonify(ret)
 
     @staticmethod
-    @APP.route(f'{url}/<id_>/assets', methods=('GET',))
+    @APP.route(f'{url}/assets', methods=('GET',))
     def get_assets(id_):
         """Get assets from database with specific category_id.   """
 
@@ -73,18 +79,6 @@ class Category(object):
         LOGGER.debug(ret)
         return jsonify(ret)
 
-    @staticmethod
-    def put():
-        pass
-
-    @staticmethod
-    def post():
-        pass
-
-    @staticmethod
-    def delete():
-        pass
-
 
 class Asset(object):
     """API for asset.  """
@@ -96,14 +90,7 @@ class Asset(object):
     def dispatch():
         """Dispatch function call.  """
 
-        cls = Asset
-        func = {
-            'GET': cls.get,
-            'POST': cls.post,
-            'PUT': cls.put,
-            'DELETE': cls.delete
-        }[request.method]
-        return func()
+        return dispatch(Asset)
 
     @staticmethod
     def get():
@@ -116,15 +103,3 @@ class Asset(object):
             ret = c.fetchall()
         LOGGER.debug(ret)
         return jsonify(ret)
-
-    @staticmethod
-    def put():
-        pass
-
-    @staticmethod
-    def post():
-        pass
-
-    @staticmethod
-    def delete():
-        pass
