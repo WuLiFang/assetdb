@@ -61,11 +61,27 @@ class CategoryFromId(object):
             ret = c.fetchone()
         LOGGER.debug(ret)
         if not ret:
+            LOGGER.warning('Get category failed : %s', id_)
             abort(404, 'No such category.')
         return jsonify(ret)
 
     @staticmethod
-    @APP.route(f'{url}/assets', methods=('GET',))
+    def put(id_):
+        data = request.get_json()
+        name = data['name']
+
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute(
+            f'UPDATE {category.TABLE_NAME} SET name=? WHERE id=?',
+            (name, id_))
+        conn.commit()
+
+        LOGGER.debug(data)
+        return 'ok'
+
+    @staticmethod
+    @APP.route(f'{url}/assets/', methods=('GET',))
     def get_assets(id_):
         """Get assets from database with specific category_id.   """
 

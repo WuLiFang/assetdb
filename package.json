@@ -7,12 +7,10 @@
     "lib": "lib"
   },
   "dependencies": {
-    "vuex": "^3.0.1"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "@types/lodash": "^4.14.106",
+    "axios": "^0.18.0",
     "css-loader": "^0.28.10",
+    "lodash": "^4.17.5",
     "node-sass": "^4.7.2",
     "pug": "^2.0.1",
     "sass": "^1.0.0-beta.5.3",
@@ -21,9 +19,13 @@
     "typescript": "^2.7.2",
     "vue": "^2.5.16",
     "vue-loader": "^14.2.1",
-    "vue-resource": "https://github.com/NateScarlet/vue-resource/tarball/1.5.1",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^4.1.1",
+    "vuex": "^3.0.1",
+    "webpack": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.1"
   },

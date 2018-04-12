@@ -1,7 +1,7 @@
 import Vue from "vue";
-import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
+import axios from "axios";
 import IndexViewComponent from "./components/index_view.vue";
 import CategoryViewComponent from "./components/category_view.vue";
 import IndexComponent from "./components/index.vue";
@@ -9,7 +9,6 @@ import { Category, CategoryStorage } from "./model";
 import { UPDATE_CATEGORIES } from "./mutation-types";
 
 Vue.use(Vuex);
-Vue.use(VueResource);
 Vue.use(VueRouter);
 
 const routes = [
@@ -24,7 +23,7 @@ const store = new Vuex.Store(
         },
         mutations: {
             async [UPDATE_CATEGORIES](state) {
-                return new Vue().$http.get("/api/category").then(response => {
+                return axios.get("/api/category").then(response => {
                     let categories = new CategoryStorage();
                     response.data.forEach((data: string[]) => {
                         categories.push(Category.from_data(data));
