@@ -28,23 +28,37 @@ export default Vue.extend({
   },
   watch: {
     category: {
-      handler(newValue, oldValue) {
-        if (!newValue || (newValue && oldValue && newValue.id == oldValue.id)) {
+      handler(newValue: Category | undefined, oldValue: Category | undefined) {
+        if (
+          !newValue ||
+          !oldValue ||
+          (newValue && oldValue && newValue.id != oldValue.id)
+        ) {
           return;
         }
-        updateCategory(newValue);
+        if (!newValue.name) {
+          return;
+        }
+        this.updateCategory(newValue);
       },
       deep: true
     }
+  },
+  methods: {
+    updateCategory: _.debounce(function(this: Vue, category: Category) {
+      axios
+        .put(`/api/category/${category.id}`, category)
+        .then(() => {
+          this.$message({ message: "更新分类信息成功", type: "success" });
+        })
+        .catch(() => {
+          this.$message({ message: "更新分类信息失败", type: "error" });
+        });
+    }, 2000)
   },
   components: {
     AssetView
   }
 });
-
-function _updateCategory(category: Category) {
-  axios.put(`/api/category/${category.id}`, category);
-}
-let updateCategory = _.debounce(_updateCategory, 2000);
 </script>
 
