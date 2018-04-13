@@ -1,6 +1,7 @@
 """Assetdb RESTful API.  """
 
 import logging
+import sqlite3
 
 from flask import abort, jsonify, request
 
@@ -49,8 +50,11 @@ class Category(object):
 
         conn = get_conn()
         c = conn.cursor()
-        c.execute(
-            f'INSERT INTO {category.TABLE_NAME}(path, name, parent_id) VALUES (?,?,?)', data)
+        try:
+            c.execute(
+                f'INSERT INTO {category.TABLE_NAME}(path, name, parent_id) VALUES (?,?,?)', data)
+        except sqlite3.IntegrityError as ex:
+            return str(ex), 400
         conn.commit()
         return 'ok'
 

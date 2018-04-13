@@ -67,7 +67,10 @@ export default Vue.extend({
         return;
       }
       let category = this.category;
-      this.$prompt("名称", "创建新分类")
+      this.$prompt("名称", "创建新分类", {
+        inputPattern: /.+/,
+        inputErrorMessage: "请输入名称"
+      })
         .then(data => {
           if (typeof data == "string") {
             return;
@@ -81,8 +84,14 @@ export default Vue.extend({
               this.$store.commit(UPDATE_CATEGORIES);
             })
             .catch(reason => {
-              let message = String(reason);
-              this.$notify({ title: "添加新分类失败", message });
+              let message: string;
+              try {
+                message = `${reason.response.status} ${reason.response.data}`;
+              } catch (error) {
+                console.warn("Parse fail reson failed." + error);
+                message = String(reason);
+              }
+              this.$notify({ title: "添加新分类失败", message, type: "error" });
             });
         })
         .catch(() => {
