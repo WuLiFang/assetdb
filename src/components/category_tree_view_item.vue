@@ -2,14 +2,18 @@
   li(v-if="category")
     router-link(:to="category.url()")
       span(:class="{current: isCurrent}") {{category.name}}
-    ul(v-for="item in children" v-show="isOpen")
-      category-tree-view-item(:category="item" v-on:open="open")
+    ul
+      category-tree-view-item(v-for="item in children" v-show="isOpen" :category="item" v-on:open="open")
+      li(v-if="isCurrent")
+        button(@click='addSubCategory') 新子分类
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import * as _ from "lodash";
+import axios from "axios";
 import { Category, CategoryStorage } from "../model";
+import { UPDATE_CATEGORIES } from "../mutation-types";
 
 export default Vue.extend({
   name: "category-tree-view-item",
@@ -64,6 +68,18 @@ export default Vue.extend({
       } else {
         this.close();
       }
+    },
+    addSubCategory() {
+      if (!this.category) {
+        return;
+      }
+      let name = prompt("名称", "未命名分类");
+      let parent_id = this.category.id;
+      let path = `${this.category.path}/${name}`;
+      axios.post(`/api/category`, { name, parent_id, path }).then(response => {
+        this.$store.commit(UPDATE_CATEGORIES);
+      });
+      console.log(name);
     }
   },
   watch: {

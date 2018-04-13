@@ -23,7 +23,7 @@ class Category(object):
     url = '/api/category'
 
     @staticmethod
-    @APP.route(url, endpoint='Category', methods=('GET', 'POST', 'PUT', 'DELETE'))
+    @APP.route(url, endpoint='Category', methods=('GET', 'POST'))
     def _dispatch():
         return dispatch(Category)
 
@@ -37,6 +37,22 @@ class Category(object):
             ret = c.fetchall()
         LOGGER.debug(ret)
         return jsonify(ret)
+
+    @staticmethod
+    def post():
+        """Create new category.  """
+
+        data = request.get_json()
+        data = (data['path'], data['name'], data['parent_id'])
+        if not all(data):
+            abort(400, 'Invalid data.')
+
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute(
+            f'INSERT INTO {category.TABLE_NAME}(path, name, parent_id) VALUES (?,?,?)', data)
+        conn.commit()
+        return 'ok'
 
 
 class CategoryFromId(object):
@@ -67,6 +83,8 @@ class CategoryFromId(object):
 
     @staticmethod
     def put(id_):
+        """Change category info.  """
+
         data = request.get_json()
         name = data['name']
 
