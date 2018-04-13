@@ -14,7 +14,6 @@ import * as _ from "lodash";
 import axios from "axios";
 import { Category, CategoryStorage } from "../model";
 import { UPDATE_CATEGORIES } from "../mutation-types";
-import { BlockStatement } from "babel-types";
 
 export default Vue.extend({
   name: "category-tree-view-item",
@@ -67,12 +66,28 @@ export default Vue.extend({
       if (!this.category) {
         return;
       }
-      let name = prompt("名称", "未命名分类");
-      let parent_id = this.category.id;
-      let path = `${this.category.path}/${name}`;
-      axios.post(`/api/category`, { name, parent_id, path }).then(response => {
-        this.$store.commit(UPDATE_CATEGORIES);
-      });
+      let category = this.category;
+      this.$prompt("名称", "创建新分类")
+        .then(data => {
+          if (typeof data == "string") {
+            return;
+          }
+          let name = data.value;
+          let parent_id = category.id;
+          let path = `${category.path}/${name}`;
+          axios
+            .post(`/api/category`, { name, parent_id, path })
+            .then(response => {
+              this.$store.commit(UPDATE_CATEGORIES);
+            })
+            .catch(reason => {
+              let message = String(reason);
+              this.$notify({ title: "添加新分类失败", message });
+            });
+        })
+        .catch(() => {
+          this.$message("创建取消");
+        });
     }
   }
 });
