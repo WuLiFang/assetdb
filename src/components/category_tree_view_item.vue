@@ -3,7 +3,7 @@
     router-link(:to="category.url()")
       span(:class="{current: isCurrent}") {{category.name}}
     ul
-      category-tree-view-item(v-for="item in children" v-show="isOpen" :category="item" v-on:open="open")
+      category-tree-view-item(v-for="item in children" v-show="isOpen" :key="item.id" :category="item")
       li(v-if="isCurrent")
         button(@click='addSubCategory') 新子分类
 </template>
@@ -14,16 +14,12 @@ import * as _ from "lodash";
 import axios from "axios";
 import { Category, CategoryStorage } from "../model";
 import { UPDATE_CATEGORIES } from "../mutation-types";
+import { BlockStatement } from "babel-types";
 
 export default Vue.extend({
   name: "category-tree-view-item",
   props: {
     category: { type: Category, default: null }
-  },
-  data() {
-    return {
-      isOpen: false
-    };
   },
   computed: {
     categories(): CategoryStorage {
@@ -47,28 +43,26 @@ export default Vue.extend({
         return false;
       }
       return this.id == this.category.id;
+    },
+    isOpen(): boolean {
+      if (!this.category) {
+        return false;
+      }
+      let isCurrent = (id: string): boolean => {
+        if (id == this.id) {
+          return true;
+        }
+        let children = _.filter(
+          this.categories,
+          value => value.parent_id == id
+        );
+        let current = _.find(children, value => isCurrent(value.id));
+        return Boolean(current);
+      };
+      return isCurrent(this.category.id);
     }
   },
   methods: {
-    open() {
-      if (!this.isOpen) {
-        this.isOpen = true;
-        this.$emit("open");
-      }
-    },
-    close() {
-      if (this.isOpen) {
-        this.isOpen = false;
-        this.$emit("close");
-      }
-    },
-    update() {
-      if (this.isCurrent) {
-        this.open();
-      } else {
-        this.close();
-      }
-    },
     addSubCategory() {
       if (!this.category) {
         return;
@@ -79,20 +73,6 @@ export default Vue.extend({
       axios.post(`/api/category`, { name, parent_id, path }).then(response => {
         this.$store.commit(UPDATE_CATEGORIES);
       });
-      console.log(name);
-    }
-  },
-  watch: {
-    id() {
-      this.update();
-    },
-    isCurrent(newValue) {
-      this.update();
-    }
-  },
-  created() {
-    if (this.isCurrent) {
-      this.open();
     }
   }
 });
