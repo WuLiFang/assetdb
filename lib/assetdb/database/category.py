@@ -42,5 +42,5 @@ def setup():
                   'id INTEGER PRIMARY KEY AUTOINCREMENT,'
                   f'parent_id INTEGER REFERENCES {TABLE_NAME}(id),'
                   'name TEXT,'
-                  'path TEXT UNIQUE ON CONFLICT IGNORE'
+                  'path TEXT UNIQUE'
                   ')',)

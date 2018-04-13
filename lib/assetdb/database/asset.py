@@ -52,7 +52,7 @@ def setup():
                   'id INTEGER PRIMARY KEY AUTOINCREMENT,'
                   f'category_id INTEGER REFERENCES {category.TABLE_NAME}(id),'
                   'name TEXT,'
-                  'path TEXT UNIQUE ON CONFLICT IGNORE,'
+                  'path TEXT UNIQUE,'
                   'memetype TEXT,'
                   'description TEXT'
                   ')',)
