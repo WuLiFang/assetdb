@@ -2,6 +2,9 @@
   div(v-if="category")
     h1 
       input(v-model='category.name')
+    //- div
+      //- button(@click="addSubCategory") 添加子分类
+      //- button 添加资产
     div ID: {{category.id}}
     div 路径: {{category.path}}
     asset-view(:category="category")
@@ -22,17 +25,23 @@ export default Vue.extend({
     id(): string {
       return this.$route.params.id;
     },
-    category(): Category {
-      return this.categories.select(this.id);
+    category(): Category | undefined {
+      return _.find(this.categories, value => value.id == this.id);
+    }
+  },
+  methods: {
+    addSubCategory() {
+      let name = prompt("名称", "未命名分类");
+      console.log(name);
     }
   },
   watch: {
     category: {
       handler(newValue, oldValue) {
-        if (newValue.id != oldValue.id) {
+        if (!newValue || (newValue && oldValue && newValue.id == oldValue.id)) {
           return;
         }
-        updateCategory(this.category);
+        updateCategory(newValue);
       },
       deep: true
     }

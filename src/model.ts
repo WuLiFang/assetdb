@@ -1,10 +1,4 @@
-export class CategoryStorage extends Array<Category>{
-    select = (id: string) => {
-        return this.filter(
-            (value) => { return value.id == id }
-        )[0]
-    };
-}
+export class CategoryStorage extends Array<Category>{ }
 export class Category {
     constructor(
         public id: string,

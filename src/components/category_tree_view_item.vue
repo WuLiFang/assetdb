@@ -14,7 +14,7 @@ import { Category, CategoryStorage } from "../model";
 export default Vue.extend({
   name: "category-tree-view-item",
   props: {
-    category: Category
+    category: { type: Category, default: null }
   },
   data() {
     return {
@@ -39,6 +39,9 @@ export default Vue.extend({
       return this.$route.params.id;
     },
     isCurrent(): boolean {
+      if (!this.category) {
+        return false;
+      }
       return this.id == this.category.id;
     }
   },
@@ -49,20 +52,32 @@ export default Vue.extend({
         this.$emit("open");
       }
     },
+    close() {
+      if (this.isOpen) {
+        this.isOpen = false;
+        this.$emit("close");
+      }
+    },
     update() {
-      this.isOpen = false;
       if (this.isCurrent) {
         this.open();
+      } else {
+        this.close();
       }
     }
   },
   watch: {
     id() {
       this.update();
+    },
+    isCurrent(newValue) {
+      this.update();
     }
   },
   created() {
-    this.update();
+    if (this.isCurrent) {
+      this.open();
+    }
   }
 });
 </script>
