@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(v-loading='isLoading')
     table(v-if="assets.length > 0")
       div {{category.name}} 资产:
         ul(v-for='asset in assets', :key='asset.id')
@@ -19,7 +19,8 @@ export default Vue.extend({
   data() {
     return {
       assets: new Array<Asset>(),
-      message: ""
+      message: "",
+      isLoading: true
     };
   },
   watch: {
@@ -31,23 +32,28 @@ export default Vue.extend({
     updateAssets() {
       let assets: Array<Asset> = [];
       this.assets = assets;
+      this.isLoading = true;
       this.message = "读取中...";
-      axios.get(`/api/category/${this.category.id}/assets`).then(
-        response => {
+      axios
+        .get(`/api/category/${this.category.id}/assets`)
+        .then(response => {
           (<Array<Array<string>>>response.data).forEach(element => {
             let asset = Asset.from_data(element);
             assets.push(asset);
           });
           this.message = "<此分类下无资产>";
-        },
-        reason => {
-          let msg = reason.body;
-          if (!msg) {
-            msg = reason;
-          }
-          this.message = msg;
-        }
-      );
+          this.isLoading = false;
+        })
+        .catch(reason => {
+          let message = String(reason);
+          this.message = message;
+          this.$notify({
+            title: "获取资产列表失败",
+            message,
+            type: "error"
+          });
+          this.isLoading = false;
+        });
     }
   },
   created() {

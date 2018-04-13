@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
 import axios from "axios";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 import IndexViewComponent from "./components/index_view.vue";
 import CategoryViewComponent from "./components/category_view.vue";
 import IndexComponent from "./components/index.vue";
@@ -10,6 +12,7 @@ import { UPDATE_CATEGORIES } from "./mutation-types";
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
+Vue.use(ElementUI);
 
 const routes = [
     { path: '/', component: IndexViewComponent },
@@ -29,7 +32,13 @@ const store = new Vuex.Store(
                         categories.push(Category.from_data(data));
                     });
                     state.categories = categories;
-                });
+                    new Vue().$notify({ title: '更新分类', message: '成功', type: 'success' })
+                }).catch(
+                    reason => {
+                        let message = String(reason)
+                        new Vue().$notify({ title: '更新分类失败', message, type: 'error' })
+                    }
+                );
             }
         }
     }

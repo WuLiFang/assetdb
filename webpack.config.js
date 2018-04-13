@@ -28,10 +28,25 @@ module.exports = {
                     appendTsSuffixTo: [/\.vue$/],
                 },
             },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
+            },
+            {
+                test: new RegExp('\\.(png|jpg|jpeg|gif|eot|ttf'
+                    + '|woff|woff2|svg|svgz)(\\?.+)?$'),
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        limit: 10000,
+                    },
+                }],
+            },
+
         ],
     },
     resolve: {
-        extensions: ['.ts', '.js', '.vue', '.json'],
+        extensions: ['.ts', '.js', '.vue', '.json', '.css'],
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
         },
