@@ -4,8 +4,7 @@
       span(:class="{current: isCurrent}") {{category.name}}
     ul
       category-tree-view-item(v-for="item in children" v-show="isOpen" :key="item.id" :category="item")
-      li(v-if="isCurrent")
-        button(@click='addSubCategory') 新子分类
+    el-button(v-if="isCurrent" icon="el-icon-plus" @click='addSubCategory' size='mini') 新子分类
 </template>
 
 <script lang="ts">
@@ -110,6 +109,9 @@ export default Vue.extend({
 a {
   text-decoration: none;
   color: black;
+}
+ul {
+  padding-left: 15px;
 }
 </style>
  

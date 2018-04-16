@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    category-tree-view-item-component(:category="topCategory")
+    ul
+      category-tree-view-item-component(:category="topCategory")
 </template>
 
 <script lang="ts">
