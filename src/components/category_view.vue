@@ -4,7 +4,7 @@
       input(v-model='category.name')
     div ID: {{category.id}}
     div 路径: {{category.path}}
-    asset-view(:category="category")
+    assets-view(:category="category")
 </template>
 
 <script lang="ts">
@@ -12,7 +12,7 @@ import Vue from "vue";
 import * as _ from "lodash";
 import axios from "axios";
 import { Category, CategoryStorage } from "../model";
-import AssetView from "./asset_view.vue";
+import AssetsView from "./assets_view.vue";
 
 export default Vue.extend({
   computed: {
@@ -57,7 +57,7 @@ export default Vue.extend({
     }, 2000)
   },
   components: {
-    AssetView
+    AssetsView
   }
 });
 </script>

@@ -1,6 +1,6 @@
 """Assetdb main view.  """
 
-from flask import Flask, abort, g, jsonify, render_template, request
+from flask import render_template
 
 from ..__about__ import __version__
 

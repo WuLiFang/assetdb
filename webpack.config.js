@@ -55,6 +55,7 @@ module.exports = {
         contentBase: path.join(__dirname, 'lib/assetdb/templates'),
         proxy: {
             '/api': 'http://localhost:6001',
+            '/storage': 'http://localhost:6001',
         },
         publicPath: '/static/',
     },

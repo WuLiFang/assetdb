@@ -2,8 +2,7 @@
   div(v-loading='isLoading')
     table(v-if="assets.length > 0")
       div {{category.name}} 资产:
-        ul(v-for='asset in assets', :key='asset.id')
-          li {{asset.name}}
+        asset-card(v-for='asset in assets', :key='asset.id', :asset="asset")
     div(v-else, v-html="message") 
 </template>
 
@@ -13,6 +12,7 @@ import Vue from "vue";
 import axios from "axios";
 import { functionDeclaration } from "babel-types";
 import { Category, Asset } from "../model";
+import AssetCard from "./asset_card.vue";
 
 export default Vue.extend({
   props: ["category"],
@@ -58,6 +58,9 @@ export default Vue.extend({
   },
   created() {
     this.updateAssets();
+  },
+  components: {
+    AssetCard
   }
 });
 </script>
