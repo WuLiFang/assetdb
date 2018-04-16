@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(class="card")
+  el-card
     img(:src="preview_url")
     div {{asset.name}}
 </template>
@@ -18,11 +18,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.card {
-  width: 200px;
+.el-card {
+  break-inside: avoid;
   word-wrap: break-word;
-  border: 1px solid black;
-  margin: 10px;
+  margin-bottom: 10px;
   img {
     width: 100%;
   }

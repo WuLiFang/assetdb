@@ -2,6 +2,7 @@
   div(v-loading='isLoading')
     table(v-if="assets.length > 0")
       div {{category.name}} 资产:
+      div(class="cards")
         asset-card(v-for='asset in assets', :key='asset.id', :asset="asset")
     div(v-else, v-html="message") 
 </template>
@@ -64,3 +65,9 @@ export default Vue.extend({
   }
 });
 </script>
+<style lang="scss" scoped>
+.cards {
+  column-width: 200px;
+  column-gap: 10px;
+}
+</style>
