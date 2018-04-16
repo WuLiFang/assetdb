@@ -123,7 +123,7 @@ class CategoryFromId(object):
             return 'No file part', 400
         if not file_.filename:
             return 'No selected file', 400
-        name = request.form.get('name', file_.filename)
+        name = request.form.get('name') or file_.filename
         filename = PurePath(name).with_suffix(PurePath(file_.filename).suffix)
         filename = secure_filename(str(filename))
 
