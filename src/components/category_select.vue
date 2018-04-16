@@ -3,7 +3,7 @@ span
   label 分类
   select(@change="route" v-model="selected")
     category-option(v-for="category in categories" :key="category.id" :category="category")
-  button(@click="update") 刷新
+  el-button(@click="update" icon="el-icon-refresh" size="mini") 刷新
 </template>
 
 <script lang="ts">

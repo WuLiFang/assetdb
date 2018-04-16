@@ -4,8 +4,10 @@ div
     category-tree-view-component
   header
     nav
-      router-link(to="/") 资产数据库
-      category-select-component
+      router-link(to="/")
+        img(class="logo")
+      div(class='breadcrumb')
+        category-breadcrumb-component
   section
     router-view
 </template>
@@ -14,17 +16,20 @@ div
 import Vue from "vue";
 import CategorySelectComponent from "./category_select.vue";
 import CategoryTreeViewComponent from "./category_tree_view.vue";
+import CategoryBreadcrumbComponent from "./category_breadcrumb.vue";
+
 export default Vue.extend({
   components: {
     CategorySelectComponent,
-    CategoryTreeViewComponent
+    CategoryTreeViewComponent,
+    CategoryBreadcrumbComponent
   }
 });
 </script>
 
 <style lang="scss" scoped>
 $side-width: 300px;
-$header-height: 35px;
+$header-height: 40px;
 nav span {
   margin: 10px;
 }
@@ -35,7 +40,7 @@ header {
   left: 0;
   width: 100%;
   height: $header-height;
-  background: lightblue;
+  background: steelblue;
 }
 section {
   position: relative;
@@ -51,6 +56,11 @@ aside {
   height: 100%;
   z-index: 10;
   overflow: auto;
+}
+.logo {
+  width: $header-height;
+  height: $header-height;
+  content: url("../logo.png");
 }
 </style>
  
