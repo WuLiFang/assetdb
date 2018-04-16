@@ -3,7 +3,7 @@
 import logging
 import os
 import sqlite3
-from pathlib import PurePath
+from pathlib import PurePath, Path
 
 from flask import abort, jsonify, redirect, request, url_for
 from werkzeug.utils import secure_filename
@@ -178,23 +178,40 @@ class CategoryFromId(object):
 class Asset(object):
     """API for asset.  """
 
-    url = '/api/asset'
+    url = '/api/asset/<id_>'
 
     @staticmethod
     @APP.route(url, endpoint='Asset', methods=('GET', 'POST', 'PUT', 'DELETE'))
-    def dispatch():
+    def dispatch(id_):
         """Dispatch function call.  """
 
-        return dispatch(Asset)
+        return dispatch(Asset, id_)
 
     @staticmethod
-    def get():
-        """Get all asset from database.   """
+    def get(id_):
+        """Get asset info from id.   """
 
-        with get_conn() as conn:
-            c = conn.cursor()
-            c.execute(
-                f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME}')
-            ret = c.fetchall()
+        conn = get_conn()
+        c = conn.cursor()
+        c = conn.cursor()
+        c.execute(
+            f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
+        ret = c.fetchone()
         LOGGER.debug(ret)
         return jsonify(ret)
+
+    @staticmethod
+    def delete(id_):
+        """Delete a asset.  """
+
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute(f'SELECT path FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
+        path = c.fetchone()[0]
+        Path(util.path(path)).unlink()
+
+        c.execute(f'DELETE FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
+        conn.commit()
+        LOGGER.info('Delete asset: %s', id_)
+
+        return 'Deleted'
