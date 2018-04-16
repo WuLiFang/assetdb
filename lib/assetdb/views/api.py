@@ -8,7 +8,7 @@ from pathlib import PurePath
 from flask import abort, jsonify, redirect, request, url_for
 from werkzeug.utils import secure_filename
 
-from .. import util
+from .. import setting, util
 from ..database import asset, category
 from .app import APP
 from .connection import get_conn
@@ -20,6 +20,13 @@ def dispatch(cls, *args, **kwargs):
     """Dispatch function call to class.  """
 
     return getattr(cls, request.method.lower())(*args, **kwargs)
+
+
+@APP.route(f'/api/root')
+def get_root():
+    """Get root path"""
+
+    return setting.ROOT
 
 
 class Category(object):

@@ -1,6 +1,6 @@
 <template lang="pug">
   el-card
-    img(:src="preview_url")
+    img(:src="preview_url" @dragstart.capture="onDragStart($event)")
     div {{asset.name}}
 </template>
 
@@ -12,6 +12,14 @@ export default Vue.extend({
   computed: {
     preview_url(): string {
       return `/storage/${this.asset.path}`;
+    },
+    fileURL(): string {
+      return `${this.$store.state.root}/${this.asset.path}`;
+    }
+  },
+  methods: {
+    onDragStart(ev: DragEvent) {
+      ev.dataTransfer.setData("text/plain", this.fileURL);
     }
   }
 });

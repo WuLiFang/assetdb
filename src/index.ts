@@ -8,7 +8,7 @@ import IndexViewComponent from "./components/index_view.vue";
 import CategoryViewComponent from "./components/category_view.vue";
 import IndexComponent from "./components/index.vue";
 import { Category, CategoryStorage } from "./model";
-import { UPDATE_CATEGORIES } from "./mutation-types";
+import { UPDATE_CATEGORIES, UPDATE_ROOT } from "./mutation-types";
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -22,7 +22,8 @@ const router = new VueRouter({ routes })
 const store = new Vuex.Store(
     {
         state: {
-            categories: new CategoryStorage()
+            categories: new CategoryStorage(),
+            root: ''
         },
         mutations: {
             async [UPDATE_CATEGORIES](state) {
@@ -39,6 +40,13 @@ const store = new Vuex.Store(
                         new Vue().$notify({ title: '更新分类失败', message, type: 'error' })
                     }
                 );
+            },
+            async [UPDATE_ROOT](state) {
+                return axios.get(`/api/root?platform=${window.navigator.platform}`).then(
+                    response => {
+                        state.root = response.data
+                    }
+                )
             }
         }
     }
@@ -50,5 +58,6 @@ const vue = new Vue({
         IndexComponent
     }
 })
+store.commit(UPDATE_ROOT)
 store.commit(UPDATE_CATEGORIES)
 vue.$mount('#app')
