@@ -1,10 +1,14 @@
 """Assetdb RESTful API.  """
 
 import logging
+import os
 import sqlite3
+from pathlib import PurePath
 
-from flask import abort, jsonify, request
+from flask import abort, jsonify, redirect, request, url_for
+from werkzeug.utils import secure_filename
 
+from .. import util
 from ..database import asset, category
 from .app import APP
 from .connection import get_conn
@@ -101,6 +105,52 @@ class CategoryFromId(object):
 
         LOGGER.debug(data)
         return 'ok'
+
+    @staticmethod
+    def post(id_):
+        """Post file under category folder.  """
+
+        try:
+            file_ = request.files['file']
+        except KeyError:
+            return 'No file part', 400
+        if not file_.filename:
+            return 'No selected file', 400
+        name = request.form.get('name', file_.filename)
+        filename = PurePath(name).with_suffix(PurePath(file_.filename).suffix)
+        filename = secure_filename(str(filename))
+
+        # Get dir.
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute(
+            f'SELECT path FROM {category.TABLE_NAME} WHERE id=?', (id_,)
+        )
+        dir_ = c.fetchone()[0]
+        path = f'{dir_}/{filename}'
+
+        # Save file.
+        save_path = util.path(path)
+        if os.path.exists(save_path):
+            return 'Filename already inuse', 400
+        LOGGER.debug('New file, save to: %s', save_path)
+        file_.save(str(save_path))
+
+        # Add table item.
+        try:
+            data = (id_, name, path, file_.mimetype,
+                    request.form.get('description'))
+            LOGGER.debug('New asset: %s', data)
+            c.execute(
+                'INSERT INTO '
+                f'{asset.TABLE_NAME}(category_id, name, path, memetype, description) '
+                'VALUES (?,?,?,?,?)', data
+            )
+            conn.commit()
+        except sqlite3.IntegrityError as ex:
+            return str(ex), 400
+
+        return redirect(url_for('get_storage', filename=path))
 
     @staticmethod
     @APP.route(f'{url}/assets/', methods=('GET',))
