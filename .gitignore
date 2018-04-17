@@ -4,3 +4,4 @@
 node_modules
 /lib/assetdb/static
 .pytest_cache
+/SENTRY_DSN

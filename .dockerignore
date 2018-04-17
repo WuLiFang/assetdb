@@ -1,0 +1,6 @@
+.venv/
+.vscode/
+.pytest_cache
+Documentation/
+node_modules/
+/src/
