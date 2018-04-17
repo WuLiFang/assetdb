@@ -3,11 +3,9 @@ div
   aside
     category-tree-component
   header
-    nav
-      router-link(to="/")
-        img(class="logo")
-      category-breadcrumb-component
-  section
+    router-link(to="/")
+      img(class="logo")
+  section(class='main')
     router-view
 </template>
 
@@ -15,13 +13,11 @@ div
 import Vue from "vue";
 import CategorySelectComponent from "./category_select.vue";
 import CategoryTreeComponent from "./category_tree.vue";
-import CategoryBreadcrumbComponent from "./category_breadcrumb.vue";
 
 export default Vue.extend({
   components: {
     CategorySelectComponent,
-    CategoryTreeComponent,
-    CategoryBreadcrumbComponent
+    CategoryTreeComponent
   }
 });
 </script>
@@ -41,10 +37,10 @@ header {
   height: $header-height;
   background: steelblue;
 }
-section {
-  position: relative;
+.main {
+  position: absolute;
+  left: $side-width;
   top: $header-height;
-  padding-left: $side-width;
 }
 aside {
   position: fixed;

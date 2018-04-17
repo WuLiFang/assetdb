@@ -1,10 +1,11 @@
 <template lang="pug">
-  div(v-if="category")
-    h1 
-      input(v-model='category.name')
-    div ID: {{category.id}}
-    div 路径: {{category.path}}
-    assets-view(:category="category")
+  el-container(v-if="category")
+    el-header
+      category-breadcrumb-component(class='breadcrumb')
+      div ID: {{category.id}}
+      div 路径: {{category.path}}
+    el-main
+      assets-view(:category="category")
 </template>
 
 <script lang="ts">
@@ -13,6 +14,7 @@ import * as _ from "lodash";
 import axios from "axios";
 import { Category, CategoryStorage } from "../model";
 import AssetsView from "./assets_view.vue";
+import CategoryBreadcrumbComponent from "./category_breadcrumb.vue";
 
 export default Vue.extend({
   computed: {
@@ -57,8 +59,24 @@ export default Vue.extend({
     }, 2000)
   },
   components: {
-    AssetsView
+    AssetsView,
+    CategoryBreadcrumbComponent
   }
 });
 </script>
 
+<style lang="scss" scoped>
+$headerHeight: 100px;
+.el-header {
+  position: fixed;
+  background: white;
+  width: 100%;
+  padding: 20px;
+  height: $headerHeight;
+  background-origin: border-box;
+  box-sizing: content-box;
+}
+.el-main {
+  padding-top: $headerHeight;
+}
+</style>
