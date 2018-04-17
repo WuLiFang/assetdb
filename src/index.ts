@@ -4,11 +4,12 @@ import Vuex from 'vuex';
 import axios from "axios";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import "element-ui/lib/theme-chalk/display.css";
 import IndexViewComponent from "./components/index_view.vue";
 import CategoryViewComponent from "./components/category_view.vue";
 import IndexComponent from "./components/index.vue";
 import { Category, CategoryStorage } from "./model";
-import { UPDATE_CATEGORIES, UPDATE_ROOT, ADD_CATEGORY } from "./mutation-types";
+import * as mutations from "./mutation-types";
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -26,21 +27,21 @@ const store = new Vuex.Store(
             root: ''
         },
         mutations: {
-            [UPDATE_CATEGORIES](state, payload) {
+            [mutations.UPDATE_CATEGORIES](state, payload) {
                 state.categories = <CategoryStorage>payload.categories
             },
-            [UPDATE_ROOT](state, payload) {
+            [mutations.UPDATE_ROOT](state, payload) {
                 state.root = <string>payload.root
             }
         },
         actions: {
-            async [UPDATE_CATEGORIES](context) {
+            async [mutations.UPDATE_CATEGORIES](context) {
                 return axios.get("/api/category").then(response => {
                     let categories = new CategoryStorage();
                     response.data.forEach((data: string[]) => {
                         categories.push(Category.from_data(data));
                     });
-                    context.commit(UPDATE_CATEGORIES, { categories })
+                    context.commit(mutations.UPDATE_CATEGORIES, { categories })
                     new Vue().$notify({ title: '更新分类', message: '成功', type: 'success' })
                 }).catch(
                     reason => {
@@ -49,14 +50,14 @@ const store = new Vuex.Store(
                     }
                 );
             },
-            async [UPDATE_ROOT](context) {
+            async [mutations.UPDATE_ROOT](context) {
                 return axios.get(`/api/root?platform=${window.navigator.platform}`).then(
                     response => {
-                        context.commit(UPDATE_ROOT, { root: response.data })
+                        context.commit(mutations.UPDATE_ROOT, { root: response.data })
                     }
                 )
             },
-            async [ADD_CATEGORY](context, payload) {
+            async [mutations.ADD_CATEGORY](context, payload) {
                 let parent = <Category | undefined>payload.parent
                 if (!parent) {
                     return;
@@ -77,7 +78,7 @@ const store = new Vuex.Store(
                         axios
                             .post(`/api/category`, { name, parent_id, path })
                             .then(response => {
-                                context.dispatch(UPDATE_CATEGORIES)
+                                context.dispatch(mutations.UPDATE_CATEGORIES)
                             })
                             .catch(reason => {
                                 let message: string;
@@ -93,6 +94,11 @@ const store = new Vuex.Store(
                     .catch(() => {
                         vue.$message("创建取消");
                     });
+            },
+            async [mutations.EDIT_CATEGORY](context, payload: mutations.PayloadEditCategory) {
+                return axios.put(`/api/category/${payload.id}`, payload.data).then(
+                    () => context.dispatch(mutations.UPDATE_CATEGORIES)
+                )
             }
         }
     }
@@ -104,6 +110,6 @@ const vue = new Vue({
         IndexComponent
     }
 })
-store.dispatch(UPDATE_ROOT)
-store.dispatch(UPDATE_CATEGORIES)
+store.dispatch(mutations.UPDATE_ROOT)
+store.dispatch(mutations.UPDATE_CATEGORIES)
 vue.$mount('#app')

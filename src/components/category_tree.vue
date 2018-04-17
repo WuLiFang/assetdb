@@ -3,12 +3,15 @@
     el-button-group(class="toolbar")
       el-button(icon="el-icon-refresh" @click='update' size='mini') 刷新
       el-button(icon="el-icon-plus" @click='addSubCategory(currentCategory)' size='mini' :disabled="!currentCategory" type="primary") 新子分类
-      el-button(icon="el-icon-edit" @click='editCategory(currentCategory)' size='mini' :disabled="true" type="primary") 编辑
+      el-button(icon="el-icon-edit" @click='isShowDialog = true' size='mini' :disabled="!currentCategory" type="primary") 编辑
       el-button(icon="el-icon-delete" @click='deleteCategory(currentCategory)' size='mini' :disabled="true" type="danger") 删除
     el-input(placeholder="正则过滤" v-model="filterText" size="mini")
     el-tree(:data="model" :props="defaultProps"  @current-change="onCurrentChange" node-key="id" ref="tree" :filter-node-method="filterNode" highlight-current=true)
       span(slot-scope="{node, data}" class="custom-tree-node" @load="onNodeLoad(data)")
         span {{data.category.name}}
+
+    el-dialog(:visible.sync="isShowDialog" :title='currentCategory ? currentCategory.name : ""')
+      div 122223
 </template>
 
 <script lang="ts">
@@ -16,11 +19,13 @@ import Vue from "vue";
 import * as _ from "lodash";
 import { CategoryStorage, Category } from "../model";
 import { ADD_CATEGORY, UPDATE_CATEGORIES } from "../mutation-types";
+import * as mutations from "../mutation-types";
 import {
   TreeNode,
   ElTree
 } from "../../node_modules/_element-ui@2.3.4@element-ui/types/tree";
 import { Tree } from "../../node_modules/_element-ui@2.3.4@element-ui";
+import { MessageBoxInputData } from "../../node_modules/_element-ui@2.3.4@element-ui/types/message-box";
 import { mapActions } from "../../node_modules/_vuex@3.0.1@vuex";
 
 interface TreeModel {
@@ -39,7 +44,8 @@ export default Vue.extend({
         label: "label",
         children: "children"
       },
-      currentCategory: <Category | null>null
+      currentCategory: <Category | null>null,
+      isShowDialog: false
     };
   },
   computed: {
@@ -74,6 +80,12 @@ export default Vue.extend({
     addSubCategory(parent: Category) {
       console.log(parent);
       this.$store.dispatch(ADD_CATEGORY, { parent });
+    },
+    editCategory(category: Category) {
+      this.$prompt("名称", `${category.name}: 编辑分类`).then(value => {
+        let data = <MessageBoxInputData>value;
+        data.value;
+      });
     },
     matchCurrent() {
       let id = this.$route.params.id;
@@ -115,7 +127,8 @@ export default Vue.extend({
 </script>
 <style lang="scss" scoped>
 .toolbar {
-  float: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .custom-tree-node {

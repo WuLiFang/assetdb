@@ -1,5 +1,5 @@
 <template lang="pug">
-div WIP
+category-select-component
 </template>
 
 <script lang="ts">

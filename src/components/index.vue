@@ -1,65 +1,44 @@
 <template lang="pug">
-div
-  aside
-    category-tree-component
-  header
+el-container
+  el-header(height="")
     router-link(to="/")
       img(class="logo")
-  section(class='main')
+  el-main
     router-view
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import CategorySelectComponent from "./category_select.vue";
-import CategoryTreeComponent from "./category_tree.vue";
 
-export default Vue.extend({
-  components: {
-    CategorySelectComponent,
-    CategoryTreeComponent
-  }
-});
+export default Vue.extend({});
 </script>
 
 <style lang="scss" scoped>
-$side-width: 315px;
 $header-height: 40px;
-nav span {
-  margin: 10px;
-}
-header {
-  z-index: 20;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: $header-height;
+.el-header {
   background: steelblue;
+  height: $header-height;
 }
-.main {
+.el-main {
   position: absolute;
-  left: $side-width;
   top: $header-height;
-}
-aside {
-  position: fixed;
-  left: 0;
-  top: $header-height;
-  bottom: 0;
-  width: $side-width;
+  width: 100vw;
   height: 100%;
-  z-index: 10;
-  overflow: auto;
+}
+.el-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
 }
 .logo {
   width: $header-height;
   height: $header-height;
   content: url("../logo.png");
-}
-.el-breadcrumb {
-  float: right;
-  margin: 12px;
 }
 </style>
 

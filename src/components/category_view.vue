@@ -1,11 +1,18 @@
 <template lang="pug">
   el-container(v-if="category")
-    el-header
-      category-breadcrumb-component(class='breadcrumb')
-      div ID: {{category.id}}
-      div 路径: {{category.path}}
-    el-main
-      assets-view(:category="category")
+    el-aside(class="hidden-xs-only")
+      category-tree
+    el-container
+      el-header(height='')
+        category-breadcrumb(class='breadcrumb')
+        el-row
+          el-col(:span="12")
+            div ID: {{category.id}}
+          el-col(:span="12")
+            div 路径: {{category.path}}
+        category-toolbar(:category="category" class='toolbar')
+      el-main
+        assets-view(:category="category")
 </template>
 
 <script lang="ts">
@@ -14,7 +21,9 @@ import * as _ from "lodash";
 import axios from "axios";
 import { Category, CategoryStorage } from "../model";
 import AssetsView from "./assets_view.vue";
-import CategoryBreadcrumbComponent from "./category_breadcrumb.vue";
+import CategoryBreadcrumb from "./category_breadcrumb.vue";
+import CategoryTree from "./category_tree.vue";
+import CategoryToolbar from "./category_toolbar.vue";
 
 export default Vue.extend({
   computed: {
@@ -26,24 +35,6 @@ export default Vue.extend({
     },
     category(): Category | undefined {
       return _.find(this.categories, value => value.id == this.id);
-    }
-  },
-  watch: {
-    category: {
-      handler(newValue: Category | undefined, oldValue: Category | undefined) {
-        if (
-          !newValue ||
-          !oldValue ||
-          (newValue && oldValue && newValue.id != oldValue.id)
-        ) {
-          return;
-        }
-        if (!newValue.name) {
-          return;
-        }
-        this.updateCategory(newValue);
-      },
-      deep: true
     }
   },
   methods: {
@@ -60,23 +51,16 @@ export default Vue.extend({
   },
   components: {
     AssetsView,
-    CategoryBreadcrumbComponent
+    CategoryBreadcrumb,
+    CategoryTree,
+    CategoryToolbar
   }
 });
 </script>
 
 <style lang="scss" scoped>
-$headerHeight: 100px;
-.el-header {
-  position: fixed;
-  background: white;
-  width: 100%;
-  padding: 20px;
-  height: $headerHeight;
-  background-origin: border-box;
-  box-sizing: content-box;
-}
-.el-main {
-  padding-top: $headerHeight;
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
