@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   aside
-    category-tree-view-component
+    category-tree-component
   header
     nav
       router-link(to="/")
@@ -14,20 +14,20 @@ div
 <script lang="ts">
 import Vue from "vue";
 import CategorySelectComponent from "./category_select.vue";
-import CategoryTreeViewComponent from "./category_tree_view.vue";
+import CategoryTreeComponent from "./category_tree.vue";
 import CategoryBreadcrumbComponent from "./category_breadcrumb.vue";
 
 export default Vue.extend({
   components: {
     CategorySelectComponent,
-    CategoryTreeViewComponent,
+    CategoryTreeComponent,
     CategoryBreadcrumbComponent
   }
 });
 </script>
 
 <style lang="scss" scoped>
-$side-width: 300px;
+$side-width: 315px;
 $header-height: 40px;
 nav span {
   margin: 10px;
