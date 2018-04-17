@@ -6,8 +6,7 @@ div
     nav
       router-link(to="/")
         img(class="logo")
-      div(class='breadcrumb')
-        category-breadcrumb-component
+      category-breadcrumb-component
   section
     router-view
 </template>
@@ -62,5 +61,10 @@ aside {
   height: $header-height;
   content: url("../logo.png");
 }
+.el-breadcrumb {
+  float: right;
+  margin: 12px;
+}
 </style>
+
  
