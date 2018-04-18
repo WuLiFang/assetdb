@@ -93,3 +93,10 @@ export default Vue.extend({
   }
 });
 </script>
+<style lang="scss" scoped>
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+</style>

@@ -1,13 +1,13 @@
 <template lang="pug">
-category-select-component
+category-tree
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import CategorySelectComponent from "./category_select.vue";
+import CategoryTree from "./category_tree.vue";
 export default Vue.extend({
   components: {
-    CategorySelectComponent
+    CategoryTree
   }
 });
 </script>

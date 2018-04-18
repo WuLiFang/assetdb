@@ -59,8 +59,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.toolbar {
-  display: flex;
-  justify-content: flex-end;
+.breadcrumb {
+  padding: 20px;
+  font-size: 1em;
 }
 </style>

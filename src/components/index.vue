@@ -16,7 +16,7 @@ export default Vue.extend({});
 <style lang="scss" scoped>
 $header-height: 40px;
 .el-header {
-  background: steelblue;
+  background: #409eff;
   height: $header-height;
 }
 .el-main {

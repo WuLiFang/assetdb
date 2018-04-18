@@ -9,7 +9,6 @@ import { Category, CategoryStorage } from "../model";
 import { UPDATE_CATEGORIES } from "../mutation-types";
 
 export default Vue.extend({
-  props: ["v-model"],
   computed: {
     categories(): CategoryStorage {
       return this.$store.state.categories;

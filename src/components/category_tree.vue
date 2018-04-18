@@ -128,6 +128,9 @@ export default Vue.extend({
     filterText(value) {
       let tree = <ElTree>this.$refs.tree;
       tree.filter(value);
+    },
+    $route() {
+      this.matchCurrent();
     }
   },
   updated() {
