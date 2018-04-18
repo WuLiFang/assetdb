@@ -4,7 +4,7 @@
       category-tree
     el-container
       el-header(height='')
-        category-breadcrumb(class='breadcrumb')
+        category-breadcrumb(class='breadcrumb' :category="category")
         el-row
           el-col(:span="12")
             div ID: {{category.id}}

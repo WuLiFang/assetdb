@@ -6,15 +6,10 @@ export class Category {
         public name: string,
         public path: string) {
     }
-    url = (): string => {
-        return `/category/${this.id}/${this.name}`
-    }
-    isTopLevel = (): boolean => {
-        return !this.parent_id
-    }
     static from_data(data: Array<string>) {
         return new Category(data[0], data[1], data[2], data[3])
     }
+
 }
 export class Asset {
     constructor(

@@ -10,8 +10,15 @@
       span(slot-scope="{node, data}" class="custom-tree-node" @load="onNodeLoad(data)")
         span {{data.category.name}}
 
-    el-dialog(:visible.sync="isShowDialog" :title='currentCategory ? currentCategory.name : ""')
-      div 122223
+    el-dialog(v-if="currentCategory" :visible.sync="isShowDialog" :title='currentCategory ? `编辑: ${currentCategory.name}` : ""')
+      div 父分类
+        el-select(v-model='currentCategory.parent_id' filterable)
+          el-option(v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" :disabled='!CategoryUtil.isLegalParent(currentCategory, category)')
+      div 名称
+        el-input(v-model='currentCategory.name')
+      span(slot='footer')
+        el-button 取消
+        el-button(type='primary') 确定
 </template>
 
 <script lang="ts">
@@ -27,6 +34,8 @@ import {
 import { Tree } from "../../node_modules/_element-ui@2.3.4@element-ui";
 import { MessageBoxInputData } from "../../node_modules/_element-ui@2.3.4@element-ui/types/message-box";
 import { mapActions } from "../../node_modules/_vuex@3.0.1@vuex";
+import CategorySelect from "./category_select.vue";
+import CategoryUtil from "../category-util";
 
 interface TreeModel {
   id: string;
@@ -45,7 +54,8 @@ export default Vue.extend({
         children: "children"
       },
       currentCategory: <Category | null>null,
-      isShowDialog: false
+      isShowDialog: false,
+      CategoryUtil
     };
   },
   computed: {
@@ -75,7 +85,7 @@ export default Vue.extend({
   methods: {
     onCurrentChange(data: TreeModel, node: any) {
       this.currentCategory = data.category;
-      this.$router.push(data.category.url());
+      this.$router.push(CategoryUtil.url(data.category));
     },
     addSubCategory(parent: Category) {
       console.log(parent);
@@ -122,6 +132,9 @@ export default Vue.extend({
   },
   updated() {
     this.matchCurrent();
+  },
+  components: {
+    CategorySelect
   }
 });
 </script>
