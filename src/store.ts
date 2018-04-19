@@ -72,7 +72,12 @@ const store = new Vuex.Store(
                         context.commit(mutations.SET_CATEGORY, _payload)
                     }
                 )
-            }
+            },
+            async [mutations.DELETE_CATEGORY](context, payload: mutations.PayloadCategoryId) {
+                return axios.delete(`/api/category/${payload.id}`).then(
+                    () => context.dispatch(mutations.UPDATE_CATEGORIES)
+                )
+            },
         }
     }
 )

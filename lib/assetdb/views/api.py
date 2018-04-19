@@ -160,6 +160,28 @@ class CategoryFromId(object):
         return redirect(url_for('get_storage', filename=path))
 
     @staticmethod
+    def delete(id_):
+        """Delete category.  """
+
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute(
+            f'SELECT COUNT(*) FROM {category.TABLE_NAME} WHERE parent_id=?', (id_,))
+        if c.fetchone()[0]:
+            return 'Not empty: child category found.', 400
+        c.execute(
+            f'SELECT COUNT(*) FROM {asset.TABLE_NAME} WHERE category_id=?', (id_,))
+        if c.fetchone()[0]:
+            return 'Not empty: child asset found.', 400
+
+        c.execute(
+            f'DELETE FROM {category.TABLE_NAME} WHERE id=?', (id_,)
+        )
+        conn.commit()
+
+        return 'Deleted'
+
+    @staticmethod
     @APP.route(f'{url}/assets/', methods=('GET',))
     def get_assets(id_):
         """Get assets from database with specific category_id.   """
@@ -182,7 +204,7 @@ class CategoryFromId(object):
         with get_conn() as conn:
             c = conn.cursor()
             c.execute(
-                f'SELECT COUNT(id) FROM {asset.TABLE_NAME} '
+                f'SELECT COUNT(*) FROM {asset.TABLE_NAME} '
                 f'WHERE category_id=?',
                 (id_,))
             ret = c.fetchone()[0]

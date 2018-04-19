@@ -36,7 +36,8 @@ import {
   UPDATE_CATEGORIES,
   PayloadEditCategory,
   EDIT_CATEGORY,
-  PayloadAddCategory
+  PayloadAddCategory,
+  PayloadCategoryId
 } from "../mutation-types";
 import * as mutations from "../mutation-types";
 import {
@@ -153,13 +154,29 @@ export default Vue.extend({
         }
       };
       this.$store
-        .dispatch(EDIT_CATEGORY, payload)
+        .dispatch(mutations.EDIT_CATEGORY, payload)
         .then(response =>
           this.$message({ message: "编辑分类成功", type: "success" })
         )
         .catch(reason =>
           this.$notify({
             title: "编辑分类失败",
+            message: `${reason.response.status} ${reason.response.data}`,
+            type: "error"
+          })
+        );
+    },
+    deleteCategory(category: Category) {
+      let payload: PayloadCategoryId = { id: category.id };
+      this.$store
+        .dispatch(mutations.DELETE_CATEGORY, payload)
+        .then(response => {
+          this.$router.push("/");
+          this.$message({ message: "删除分类成功", type: "success" });
+        })
+        .catch(reason =>
+          this.$notify({
+            title: "删除分类失败",
             message: `${reason.response.status} ${reason.response.data}`,
             type: "error"
           })

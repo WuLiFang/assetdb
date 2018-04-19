@@ -6,6 +6,8 @@ export const ADD_CATEGORY = 'add_category'
 export const EDIT_CATEGORY = 'edit_category'
 export const COUNT_CATEGORY = 'count_category'
 export const SET_CATEGORY = 'set_category'
+export const DELETE_CATEGORY = 'delete_category'
+
 export interface PayloadCategoryId {
     id: string
 }
