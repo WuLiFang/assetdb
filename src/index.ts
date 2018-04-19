@@ -11,7 +11,8 @@ import * as mutations from "./mutation-types";
 import store from './store';
 
 import IndexViewComponent from "./components/index_view.vue";
-import CategoryViewComponent from "./components/category_view.vue";
+import CategoryView from "./components/category_view.vue";
+import AssetView from "./components/asset_view.vue";
 import IndexComponent from "./components/index.vue";
 
 Vue.use(VueRouter);
@@ -19,7 +20,8 @@ Vue.use(ElementUI);
 
 const routes = [
     { path: '/', component: IndexViewComponent },
-    { path: '/category/:id', component: CategoryViewComponent, alias: '/category/:id/:name' },
+    { path: '/category/:id', component: CategoryView, alias: '/category/:id/:name' },
+    { path: '/asset/:id', component: AssetView, alias: '/asset/:id/:name' },
 ]
 const router = new VueRouter({ routes })
 

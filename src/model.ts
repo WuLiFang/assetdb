@@ -1,4 +1,6 @@
+// TODO: Refactor `CategoryStorage`
 export class CategoryStorage extends Array<Category>{ }
+
 export class Category {
     public count: number | null = null;
     constructor(
@@ -12,6 +14,10 @@ export class Category {
     }
 
 }
+export interface AssetStorage {
+    [id: string]: Asset
+}
+
 export class Asset {
     constructor(
         public id: string,

@@ -1,5 +1,5 @@
-import { Category } from "./model";
-
+import { Category, Asset } from "./model";
+// Category mutations.
 export const UPDATE_CATEGORIES = 'update_categories'
 export const UPDATE_ROOT = 'update_root'
 export const ADD_CATEGORY = 'add_category'
@@ -20,4 +20,30 @@ export interface PayloadAddCategory {
 
 export interface PayloadSetCategory extends PayloadCategoryId {
     count?: number | null
+}
+
+// Asset mutations.
+export const LOAD_ASSETS = 'load_assets'
+export const LOAD_ASSET = 'load_asset'
+export const ADD_ASSET = 'add_asset'
+export const DELETE_ASSET = 'delete_asset'
+export const EDIT_ASSET = 'edit_asset'
+export interface PayloadAssetId {
+    id: string
+}
+export interface PayloadLoadAssets {
+    assets: Array<Asset>
+}
+// TODO
+export interface PayloadAddAsset {
+    categoryID: string,
+    name: string
+}
+export interface PayloadEditAsset {
+    id: string,
+    name?: string
+}
+
+export interface PayloadDeleteAsset {
+    id: string
 }

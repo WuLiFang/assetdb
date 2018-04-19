@@ -13,13 +13,15 @@
         
 
     el-dialog(v-if="currentCategory" :visible.sync="isShowDialog" :title='currentCategory ? `编辑: ${currentCategory.name}` : ""')
-      el-row 
-        el-col(:span="4") 父分类
+      el-row
+        el-col(:span="4") 
+          span 父分类
         el-col(:span="20")
           el-select(v-model='currentCategory.parent_id' filterable)
             el-option(v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" :disabled='!CategoryUtil.isLegalParent(currentCategory, category)')
       el-row
-        el-col(:span="4") 名称
+        el-col(:span="4")
+          span 名称
         el-col(:span="20")
           el-input(v-model='currentCategory.name')
       span(slot='footer')

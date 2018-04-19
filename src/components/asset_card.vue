@@ -5,17 +5,18 @@
         el-button(icon='el-icon-delete' type="danger" size="mini" @click="deleteAsset")
     img(:src="preview_url" @dragstart.capture="onDragStart($event)")
     div {{asset.name}}
+    router-link(:to="AssetUtil.url(asset)") 详情
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Asset } from "../model";
 import axios from "axios";
-
+import AssetUtil from "../asset-util";
 export default Vue.extend({
   props: { asset: { type: Asset } },
   data() {
-    return { isDeleted: false };
+    return { isDeleted: false, AssetUtil };
   },
   computed: {
     preview_url(): string {

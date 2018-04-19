@@ -6,16 +6,19 @@
       div(v-else, v-html="message")
 </template>
 
-
 <script lang="ts">
 import Vue from "vue";
-import axios from "axios";
 import { functionDeclaration } from "babel-types";
 import { Category, Asset } from "../model";
 import AssetCard from "./asset_card.vue";
+import * as mutations from "../mutation-types";
+import * as _ from "lodash";
+import AssetUtil from "../asset-util";
 
 export default Vue.extend({
-  props: ["category"],
+  props: {
+    category: { type: Category }
+  },
   data() {
     return {
       assets: new Array<Asset>(),
@@ -36,26 +39,22 @@ export default Vue.extend({
   },
   methods: {
     updateAssets() {
-      let assets: Array<Asset> = [];
-      this.assets = assets;
       this.isLoading = true;
       this.message = "读取中...";
-      axios
-        .get(`/api/category/${this.category.id}/assets`)
+      let payload: mutations.PayloadCategoryId = { id: this.category.id };
+      this.$store
+        .dispatch(mutations.LOAD_ASSETS, payload)
         .then(response => {
-          (<Array<Array<string>>>response.data).forEach(element => {
-            let asset = Asset.from_data(element);
-            assets.push(asset);
-          });
-          this.message = "<此分类下无资产>";
+          this.assets = _.filter(
+            AssetUtil.storage,
+            value => value.category_id == this.category.id
+          );
           this.isLoading = false;
         })
         .catch(reason => {
-          let message = String(reason);
-          this.message = message;
           this.$notify({
-            title: "获取资产列表失败",
-            message,
+            title: "读取资产失败",
+            message: `${reason.response.status} ${reason.response.data}`,
             type: "error"
           });
           this.isLoading = false;
@@ -86,6 +85,7 @@ export default Vue.extend({
   }
 });
 </script>
+
 <style lang="scss" scoped>
 .cards {
   column-width: 200px;

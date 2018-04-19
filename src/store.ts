@@ -2,7 +2,7 @@
 import Vuex from 'vuex';
 import * as mutations from "./mutation-types";
 import * as _ from "lodash";
-import { Category, CategoryStorage } from "./model";
+import { Category, CategoryStorage, Asset, AssetStorage } from "./model";
 import axios from "axios";
 
 import Vue from "vue";
@@ -11,8 +11,9 @@ Vue.use(Vuex);
 const store = new Vuex.Store(
     {
         state: {
-            categories: new CategoryStorage(),
-            root: ''
+            categories: <Array<Category>>[],
+            root: '',
+            assets: <AssetStorage>{}
         },
         mutations: {
             [mutations.UPDATE_CATEGORIES](state, payload) {
@@ -30,6 +31,9 @@ const store = new Vuex.Store(
                 if (payload.count) {
                     category.count = payload.count
                 }
+            },
+            [mutations.LOAD_ASSETS](state, payload: mutations.PayloadLoadAssets) {
+                payload.assets.forEach(value => state.assets[value.id] = value)
             }
         },
         actions: {
@@ -78,6 +82,29 @@ const store = new Vuex.Store(
                     () => context.dispatch(mutations.UPDATE_CATEGORIES)
                 )
             },
+            async [mutations.LOAD_ASSETS](context, payload: mutations.PayloadCategoryId) {
+                return axios
+                    .get(`/api/category/${payload.id}/assets`)
+                    .then(
+                        response => {
+                            let data = <Array<Array<string>>>response.data
+                            let assets = (data).map(value => Asset.from_data(value));
+                            let payload: mutations.PayloadLoadAssets = { assets }
+                            context.commit(mutations.LOAD_ASSETS, payload)
+                        }
+                    )
+            },
+            async [mutations.LOAD_ASSET](context, payload: mutations.PayloadAssetId) {
+                return axios.get(`/api/asset/${payload.id}`).then(
+                    response => {
+                        let data = <Array<string>>response.data
+                        let assets = [Asset.from_data(data)];
+                        let payload: mutations.PayloadLoadAssets = { assets }
+                        context.commit(mutations.LOAD_ASSETS, payload)
+
+                    }
+                )
+            }
         }
     }
 )
