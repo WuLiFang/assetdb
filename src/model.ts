@@ -1,5 +1,6 @@
 export class CategoryStorage extends Array<Category>{ }
 export class Category {
+    public count: number | null = null;
     constructor(
         public id: string,
         public parent_id: string,

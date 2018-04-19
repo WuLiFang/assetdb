@@ -174,6 +174,21 @@ class CategoryFromId(object):
         LOGGER.debug(ret)
         return jsonify(ret)
 
+    @staticmethod
+    @APP.route(f'{url}/count/', methods=('GET',))
+    def get_count(id_):
+        """Get assets from database with specific category_id.   """
+
+        with get_conn() as conn:
+            c = conn.cursor()
+            c.execute(
+                f'SELECT COUNT(id) FROM {asset.TABLE_NAME} '
+                f'WHERE category_id=?',
+                (id_,))
+            ret = c.fetchone()[0]
+        LOGGER.debug(ret)
+        return jsonify(ret)
+
 
 class Asset(object):
     """API for asset.  """

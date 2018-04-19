@@ -5,17 +5,17 @@ export const UPDATE_ROOT = 'update_root'
 export const ADD_CATEGORY = 'add_category'
 export const EDIT_CATEGORY = 'edit_category'
 export const COUNT_CATEGORY = 'count_category'
-
-export interface PayloadEditCategory {
-    id: string,
+export const SET_CATEGORY = 'set_category'
+export interface PayloadCategoryId {
+    id: string
+}
+export interface PayloadEditCategory extends PayloadCategoryId {
     data: { name: string, parent_id: string }
 }
 export interface PayloadAddCategory {
     name: string, parent_id: string, path: string
 }
-export interface PayloadDeleteCategory {
-    id: string
-}
-export interface PayloadCountCategoryAssets {
-    id: string
+
+export interface PayloadSetCategory extends PayloadCategoryId {
+    count?: number | null
 }

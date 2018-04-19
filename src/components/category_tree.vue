@@ -4,11 +4,13 @@
       el-button(icon="el-icon-refresh" @click='update' size='mini') 刷新
       el-button(icon="el-icon-plus" @click='addSubCategory(currentCategory)' size='mini' :disabled="!currentCategory" type="primary") 新子分类
       el-button(icon="el-icon-edit" @click='isShowDialog = true' size='mini' :disabled="!currentCategory" type="primary") 编辑
-      el-button(icon="el-icon-delete" @click='deleteCategory(currentCategory)' size='mini' :disabled="true" type="danger") 删除
+      el-button(icon="el-icon-delete" @click='deleteCategory(currentCategory)' size='mini' :disabled="!allowDelete" type="danger") 删除
     el-input(placeholder="正则过滤" v-model="filterText" size="mini")
     el-tree(:data="model" :props="defaultProps"  @current-change="onCurrentChange" node-key="id" ref="tree" :filter-node-method="filterNode" highlight-current=true)
       span(slot-scope="{node, data}" class="custom-tree-node" @load="onNodeLoad(data)")
         span {{data.category.name}}
+        el-badge(:value="data.category.count")
+        
 
     el-dialog(v-if="currentCategory" :visible.sync="isShowDialog" :title='currentCategory ? `编辑: ${currentCategory.name}` : ""')
       el-row 
@@ -90,6 +92,16 @@ export default Vue.extend({
     },
     categories(): CategoryStorage {
       return this.$store.state.categories;
+    },
+    allowDelete(): boolean {
+      let category = this.currentCategory;
+      if (!category) {
+        return false;
+      }
+      return (
+        CategoryUtil.getChildren(category).length === 0 &&
+        CategoryUtil.getRecurseCount(category) === 0
+      );
     }
   },
   methods: {
@@ -155,14 +167,15 @@ export default Vue.extend({
     },
     matchCurrent() {
       let id = this.$route.params.id;
-      let match = (id: string) => {
-        let category = _.find(this.categories, value => value.id == id);
-        if (category) {
-          this.expand(category.id);
-          match(category.parent_id);
-        }
-      };
-      match(id);
+      let category = CategoryUtil.getCategory(id);
+      if (!category) {
+        return;
+      }
+      CategoryUtil.getChildren(category).forEach(value => {
+        let payload: mutations.PayloadCategoryId = { id: value.id };
+        this.$store.dispatch(mutations.COUNT_CATEGORY, payload);
+      });
+      CategoryUtil.getRelated(category).forEach(value => this.expand(value.id));
     },
     expand(id: string) {
       let tree = <ElTree>this.$refs.tree;
@@ -191,6 +204,9 @@ export default Vue.extend({
     $route() {
       this.matchCurrent();
     }
+  },
+  mounted() {
+    this.matchCurrent();
   },
   updated() {
     this.matchCurrent();

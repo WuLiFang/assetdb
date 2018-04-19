@@ -1,6 +1,7 @@
 
 import Vuex from 'vuex';
 import * as mutations from "./mutation-types";
+import * as _ from "lodash";
 import { Category, CategoryStorage } from "./model";
 import axios from "axios";
 
@@ -19,6 +20,16 @@ const store = new Vuex.Store(
             },
             [mutations.UPDATE_ROOT](state, payload) {
                 state.root = <string>payload.root
+            },
+            [mutations.SET_CATEGORY](state, payload: mutations.PayloadSetCategory) {
+                let category = _.find(state.categories, value => value.id == payload.id)
+                if (!category) {
+                    console.error('Set category failed, no such category.')
+                    return
+                }
+                if (payload.count) {
+                    category.count = payload.count
+                }
             }
         },
         actions: {
@@ -52,6 +63,14 @@ const store = new Vuex.Store(
             async [mutations.EDIT_CATEGORY](context, payload: mutations.PayloadEditCategory) {
                 return axios.put(`/api/category/${payload.id}`, payload.data).then(
                     () => context.dispatch(mutations.UPDATE_CATEGORIES)
+                )
+            },
+            async [mutations.COUNT_CATEGORY](context, payload: mutations.PayloadCategoryId) {
+                return axios.get(`/api/category/${payload.id}/count`).then(
+                    response => {
+                        let _payload: mutations.PayloadSetCategory = { id: payload.id, count: response.data }
+                        context.commit(mutations.SET_CATEGORY, _payload)
+                    }
                 )
             }
         }

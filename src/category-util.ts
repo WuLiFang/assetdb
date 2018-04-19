@@ -40,4 +40,11 @@ export default class CategoryUtil {
     static getCategory(id: string): Category | undefined {
         return _.find(this.categories, value => value.id == id);
     }
+    static getChildren(category: Category): Category[] {
+        return _.filter(this.categories, value => value.parent_id == category.id)
+    }
+    static getRecurseCount(category: Category): number {
+        let count = category.count ? category.count : 0
+        return this.getChildren(category).reduce((prev, current) => prev + this.getRecurseCount(current), count)
+    }
 }
