@@ -44,43 +44,10 @@ const store = new Vuex.Store(
                     }
                 )
             },
-            async [mutations.ADD_CATEGORY](context, payload) {
-                let parent = <Category | undefined>payload.parent
-                if (!parent) {
-                    return;
-                }
-                let category = parent
-                let vue = new Vue()
-                return vue.$prompt("名称", `${category.name}: 新子分类`, {
-                    inputPattern: /.+/,
-                    inputErrorMessage: "请输入名称"
+            async [mutations.ADD_CATEGORY](context, payload: mutations.PayloadAddCategory) {
+                return axios.post(`/api/category`, payload).then(response => {
+                    context.dispatch(mutations.UPDATE_CATEGORIES)
                 })
-                    .then(data => {
-                        if (typeof data == "string") {
-                            return;
-                        }
-                        let name = data.value;
-                        let parent_id = category.id;
-                        let path = `${category.path}/${name}`;
-                        axios
-                            .post(`/api/category`, { name, parent_id, path })
-                            .then(response => {
-                                context.dispatch(mutations.UPDATE_CATEGORIES)
-                            })
-                            .catch(reason => {
-                                let message: string;
-                                try {
-                                    message = `${reason.response.status} ${reason.response.data}`;
-                                } catch (error) {
-                                    console.warn("Parse fail reson failed." + error);
-                                    message = String(reason);
-                                }
-                                vue.$notify({ title: "添加新分类失败", message, type: "error" });
-                            });
-                    })
-                    .catch(() => {
-                        vue.$message("创建取消");
-                    });
             },
             async [mutations.EDIT_CATEGORY](context, payload: mutations.PayloadEditCategory) {
                 return axios.put(`/api/category/${payload.id}`, payload.data).then(

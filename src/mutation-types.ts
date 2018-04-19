@@ -11,7 +11,7 @@ export interface PayloadEditCategory {
     data: { name: string, parent_id: string }
 }
 export interface PayloadAddCategory {
-    name: string, parent_id: string
+    name: string, parent_id: string, path: string
 }
 export interface PayloadDeleteCategory {
     id: string

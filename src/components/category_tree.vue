@@ -11,21 +11,31 @@
         span {{data.category.name}}
 
     el-dialog(v-if="currentCategory" :visible.sync="isShowDialog" :title='currentCategory ? `编辑: ${currentCategory.name}` : ""')
-      div 父分类
-        el-select(v-model='currentCategory.parent_id' filterable)
-          el-option(v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" :disabled='!CategoryUtil.isLegalParent(currentCategory, category)')
-      div 名称
-        el-input(v-model='currentCategory.name')
+      el-row 
+        el-col(:span="4") 父分类
+        el-col(:span="20")
+          el-select(v-model='currentCategory.parent_id' filterable)
+            el-option(v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" :disabled='!CategoryUtil.isLegalParent(currentCategory, category)')
+      el-row
+        el-col(:span="4") 名称
+        el-col(:span="20")
+          el-input(v-model='currentCategory.name')
       span(slot='footer')
-        el-button 取消
-        el-button(type='primary') 确定
+        el-button(@click='update();isShowDialog = false') 取消
+        el-button(@click='editCategory(currentCategory);isShowDialog = false' type='primary') 确定
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import * as _ from "lodash";
 import { CategoryStorage, Category } from "../model";
-import { ADD_CATEGORY, UPDATE_CATEGORIES } from "../mutation-types";
+import {
+  ADD_CATEGORY,
+  UPDATE_CATEGORIES,
+  PayloadEditCategory,
+  EDIT_CATEGORY,
+  PayloadAddCategory
+} from "../mutation-types";
 import * as mutations from "../mutation-types";
 import {
   TreeNode,
@@ -87,15 +97,61 @@ export default Vue.extend({
       this.currentCategory = data.category;
       this.$router.push(CategoryUtil.url(data.category));
     },
-    addSubCategory(parent: Category) {
+    addSubCategory(category: Category) {
       console.log(parent);
-      this.$store.dispatch(ADD_CATEGORY, { parent });
+      return this.$prompt("名称", `${category.name}: 新子分类`, {
+        inputPattern: /.+/,
+        inputErrorMessage: "请输入名称"
+      })
+        .then(data => {
+          if (typeof data == "string") {
+            return;
+          }
+          let name = data.value;
+          let parent_id = category.id;
+          let path = `${category.path}/${name}`;
+          let payload: PayloadAddCategory = {
+            name: data.value,
+            parent_id: category.id,
+            path
+          };
+          this.$store
+            .dispatch(ADD_CATEGORY, payload)
+            .then(response => {
+              this.update();
+            })
+            .catch(reason => {
+              this.$notify({
+                title: "添加新分类失败",
+                message: `${reason.response.status} ${reason.response.data}`,
+                type: "error"
+              });
+            });
+        })
+        .catch(() => {
+          this.$message("创建取消");
+        });
     },
     editCategory(category: Category) {
-      this.$prompt("名称", `${category.name}: 编辑分类`).then(value => {
-        let data = <MessageBoxInputData>value;
-        data.value;
-      });
+      let payload: PayloadEditCategory = {
+        id: category.id,
+        data: {
+          name: category.name,
+          parent_id: category.parent_id
+        }
+      };
+      this.$store
+        .dispatch(EDIT_CATEGORY, payload)
+        .then(response =>
+          this.$message({ message: "编辑分类成功", type: "success" })
+        )
+        .catch(reason =>
+          this.$notify({
+            title: "编辑分类失败",
+            message: `${reason.response.status} ${reason.response.data}`,
+            type: "error"
+          })
+        );
     },
     matchCurrent() {
       let id = this.$route.params.id;
@@ -122,7 +178,10 @@ export default Vue.extend({
       if (!value) return true;
       return new RegExp(value, "i").test(data.category.name);
     },
-    ...mapActions({ update: UPDATE_CATEGORIES })
+    // Actions
+    update() {
+      this.$store.dispatch(UPDATE_CATEGORIES);
+    }
   },
   watch: {
     filterText(value) {
