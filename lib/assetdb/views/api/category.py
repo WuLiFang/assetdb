@@ -1,32 +1,20 @@
-"""Assetdb RESTful API.  """
+"""Assetdb RESTful API about category.  """
 
 import logging
 import os
 import sqlite3
-from pathlib import PurePath, Path
+from pathlib import PurePath
 
 from flask import abort, jsonify, redirect, request, url_for
 from werkzeug.utils import secure_filename
 
-from .. import setting, util
-from ..database import asset, category
-from .app import APP
-from .connection import get_conn
+from ... import util
+from ...database import asset, category
+from ..app import APP
+from ..connection import get_conn
+from .core import dispatch
 
 LOGGER = logging.getLogger(__name__)
-
-
-def dispatch(cls, *args, **kwargs):
-    """Dispatch function call to class.  """
-
-    return getattr(cls, request.method.lower())(*args, **kwargs)
-
-
-@APP.route(f'/api/root')
-def get_root():
-    """Get root path"""
-
-    return setting.ROOT
 
 
 class Category(object):
@@ -210,45 +198,3 @@ class CategoryFromId(object):
             ret = c.fetchone()[0]
         LOGGER.debug(ret)
         return jsonify(ret)
-
-
-class Asset(object):
-    """API for asset.  """
-
-    url = '/api/asset/<id_>'
-
-    @staticmethod
-    @APP.route(url, endpoint='Asset', methods=('GET', 'POST', 'PUT', 'DELETE'))
-    def dispatch(id_):
-        """Dispatch function call.  """
-
-        return dispatch(Asset, id_)
-
-    @staticmethod
-    def get(id_):
-        """Get asset info from id.   """
-
-        conn = get_conn()
-        c = conn.cursor()
-        c = conn.cursor()
-        c.execute(
-            f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
-        ret = c.fetchone()
-        LOGGER.debug(ret)
-        return jsonify(ret)
-
-    @staticmethod
-    def delete(id_):
-        """Delete a asset.  """
-
-        conn = get_conn()
-        c = conn.cursor()
-        c.execute(f'SELECT path FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
-        path = c.fetchone()[0]
-        Path(util.path(path)).unlink()
-
-        c.execute(f'DELETE FROM {asset.TABLE_NAME} WHERE id=?', (id_,))
-        conn.commit()
-        LOGGER.info('Delete asset: %s', id_)
-
-        return 'Deleted'
