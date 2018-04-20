@@ -101,7 +101,6 @@ const store = new Vuex.Store(
                         let assets = [Asset.from_data(data)];
                         let payload: mutations.PayloadLoadAssets = { assets }
                         context.commit(mutations.LOAD_ASSETS, payload)
-
                     }
                 )
             }
