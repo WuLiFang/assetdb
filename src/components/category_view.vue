@@ -4,7 +4,7 @@
       category-tree
     el-container
       el-header(height='')
-        category-breadcrumb(class='breadcrumb' :category="category")
+        category-breadcrumb(:category="category")
         el-row
           el-col(:span="12")
             div ID: {{category.id}}
@@ -59,7 +59,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.breadcrumb {
+.el-breadcrumb {
   padding: 20px;
   font-size: 1em;
 }

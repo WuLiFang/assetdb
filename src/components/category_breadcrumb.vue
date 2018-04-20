@@ -3,6 +3,7 @@
     el-breadcrumb-item(v-for="i in relatedCategories" :key="i.id") 
       router-link(:to="CategoryUtil.url(i)")
         span {{i.name}}
+    slot
 </template>
 
 <script lang="ts">

@@ -1,8 +1,10 @@
 <template lang="pug">
   el-container
     el-header
-      category-breadcrumb(:category="parentCategory")
-    div {{asset.name}} WIP
+      category-breadcrumb(:category="parentCategory") 
+        el-breadcrumb-item 
+          span {{asset.name}}
+    div WIP
 </template>
 
 <script lang="ts">
@@ -26,3 +28,10 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.el-breadcrumb {
+  padding: 20px;
+  font-size: 1em;
+}
+</style>
