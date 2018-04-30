@@ -42,13 +42,10 @@ import {
   PayloadCategoryId
 } from "../mutation-types";
 import * as mutations from "../mutation-types";
-import {
-  TreeNode,
-  ElTree
-} from "../../node_modules/_element-ui@2.3.4@element-ui/types/tree";
-import { Tree } from "../../node_modules/_element-ui@2.3.4@element-ui";
-import { MessageBoxInputData } from "../../node_modules/_element-ui@2.3.4@element-ui/types/message-box";
-import { mapActions } from "../../node_modules/_vuex@3.0.1@vuex";
+import { TreeNode, ElTree } from "element-ui/types/tree";
+import { Tree } from "element-ui";
+import { MessageBoxInputData } from "element-ui/types/message-box";
+import { mapActions } from "vuex";
 import CategorySelect from "./category_select.vue";
 import CategoryUtil from "../category-util";
 
