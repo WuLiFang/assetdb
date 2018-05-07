@@ -10,9 +10,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Asset } from "../model";
+
 import axios from "axios";
+
+import { Asset } from "../model";
 import AssetUtil from "../asset-util";
+
 export default Vue.extend({
   props: { asset: { type: Asset } },
   data() {

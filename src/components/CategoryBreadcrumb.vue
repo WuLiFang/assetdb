@@ -9,6 +9,7 @@
 <script lang="ts">
 import Vue from "vue";
 import * as _ from "lodash";
+
 import { CategoryStorage, Category } from "../model";
 import CategoryUtil from "../category-util";
 

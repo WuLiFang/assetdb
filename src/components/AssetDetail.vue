@@ -1,7 +1,7 @@
 <template lang="pug">
   el-container
     el-header
-      category-breadcrumb(:category="parentCategory") 
+      CategoryBreadcrumb(:category="parentCategory") 
         el-breadcrumb-item 
           span {{asset.name}}
     div WIP
@@ -9,9 +9,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import CategoryBreadcrumb from "./category_breadcrumb.vue";
-import { Asset, Category } from "../model";
+
+import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
+
 import CategoryUtil from "../category-util";
+import { Asset, Category } from "../model";
+
 export default Vue.extend({
   props: {
     asset: {

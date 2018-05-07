@@ -5,8 +5,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Category, CategoryStorage } from "../model";
-import { UPDATE_CATEGORIES } from "../mutation-types";
+
+import { CategoryStorage } from "../model";
 
 export default Vue.extend({
   computed: {

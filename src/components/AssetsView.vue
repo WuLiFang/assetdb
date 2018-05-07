@@ -2,18 +2,19 @@
   el-container
     el-main(v-loading='isLoading')
       div(v-if="assets.length > 0" class="cards")
-        asset-card(v-for='asset in assets', :key='asset.id', :asset="asset")
+        AssetCard(v-for='asset in assets', :key='asset.id', :asset="asset")
       div(v-else, v-html="message")
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { functionDeclaration } from "babel-types";
-import { Category, Asset } from "../model";
-import AssetCard from "./asset_card.vue";
-import * as mutations from "../mutation-types";
 import * as _ from "lodash";
+
+import AssetCard from "./AssetCard.vue";
+
 import AssetUtil from "../asset-util";
+import { Category, Asset } from "../model";
+import * as mutations from "../mutation-types";
 
 export default Vue.extend({
   props: {

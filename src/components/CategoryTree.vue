@@ -31,23 +31,16 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapActions } from "vuex";
+
 import * as _ from "lodash";
-import { CategoryStorage, Category } from "../model";
-import {
-  ADD_CATEGORY,
-  UPDATE_CATEGORIES,
-  PayloadEditCategory,
-  EDIT_CATEGORY,
-  PayloadAddCategory,
-  PayloadCategoryId
-} from "../mutation-types";
-import * as mutations from "../mutation-types";
+import { MessageBoxInputData } from "element-ui/types/message-box";
 import { TreeNode, ElTree } from "element-ui/types/tree";
 import { Tree } from "element-ui";
-import { MessageBoxInputData } from "element-ui/types/message-box";
-import { mapActions } from "vuex";
-import CategorySelect from "./category_select.vue";
+
+import { CategoryStorage, Category } from "../model";
 import CategoryUtil from "../category-util";
+import * as mutations from "../mutation-types";
 
 interface TreeModel {
   id: string;
@@ -122,13 +115,13 @@ export default Vue.extend({
           let name = data.value;
           let parent_id = category.id;
           let path = `${category.path}/${name}`;
-          let payload: PayloadAddCategory = {
+          let payload: mutations.PayloadAddCategory = {
             name: data.value,
             parent_id: category.id,
             path
           };
           this.$store
-            .dispatch(ADD_CATEGORY, payload)
+            .dispatch(mutations.ADD_CATEGORY, payload)
             .then(response => {
               this.update();
             })
@@ -145,7 +138,7 @@ export default Vue.extend({
         });
     },
     editCategory(category: Category) {
-      let payload: PayloadEditCategory = {
+      let payload: mutations.PayloadEditCategory = {
         id: category.id,
         data: {
           name: category.name,
@@ -166,7 +159,7 @@ export default Vue.extend({
         );
     },
     deleteCategory(category: Category) {
-      let payload: PayloadCategoryId = { id: category.id };
+      let payload: mutations.PayloadCategoryId = { id: category.id };
       this.$store
         .dispatch(mutations.DELETE_CATEGORY, payload)
         .then(response => {
@@ -209,7 +202,7 @@ export default Vue.extend({
     },
     // Actions
     update() {
-      this.$store.dispatch(UPDATE_CATEGORIES);
+      this.$store.dispatch(mutations.UPDATE_CATEGORIES);
     }
   },
   watch: {
@@ -226,9 +219,6 @@ export default Vue.extend({
   },
   updated() {
     this.matchCurrent();
-  },
-  components: {
-    CategorySelect
   }
 });
 </script>

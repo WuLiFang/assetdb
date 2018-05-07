@@ -1,29 +1,32 @@
 <template lang="pug">
   el-container(v-if="category")
     el-aside(class="hidden-xs-only")
-      category-tree
+      CategoryTree
     el-container
       el-header(height='')
-        category-breadcrumb(:category="category")
+        CategoryBreadcrumb(:category="category")
         el-row
           el-col(:span="12")
             div ID: {{category.id}}
           el-col(:span="12")
             div 路径: {{category.path}}
-        category-toolbar(:category="category" class='toolbar')
+        CategoryToolbar(:category="category" class='toolbar')
       el-main
-        assets-view(:category="category")
+        AssetsView(:category="category")
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+
 import * as _ from "lodash";
 import axios from "axios";
+
+import AssetsView from "./AssetsView.vue";
+import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
+import CategoryTree from "./CategoryTree.vue";
+import CategoryToolbar from "./CategoryToolbar.vue";
+
 import { Category, CategoryStorage } from "../model";
-import AssetsView from "./assets_view.vue";
-import CategoryBreadcrumb from "./category_breadcrumb.vue";
-import CategoryTree from "./category_tree.vue";
-import CategoryToolbar from "./category_toolbar.vue";
 
 export default Vue.extend({
   computed: {

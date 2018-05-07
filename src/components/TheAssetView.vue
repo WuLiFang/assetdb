@@ -1,17 +1,20 @@
 <template lang="pug">
-  asset-detail(v-if="asset", :asset="asset")
+  AssetDetail(v-if="asset", :asset="asset")
   div(v-else v-loading="isLoading") {{placeholder}}
 </template>
 <script lang="ts">
 import Vue from "vue";
-import CategoryBreadcrumb from "./category_breadcrumb.vue";
-import AssetDetail from "./asset_detail.vue";
+
+import { AxiosError, AxiosResponse } from "axios";
+
+import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
+import AssetDetail from "./AssetDetail.vue";
 
 import { Asset, AssetStorage } from "../model";
-import CategoryUtil from "../category-util";
 import AssetUtil from "../asset-util";
+import CategoryUtil from "../category-util";
 import * as mutations from "../mutation-types";
-import { AxiosError, AxiosResponse } from "axios";
+
 export default Vue.extend({
   data() {
     return {

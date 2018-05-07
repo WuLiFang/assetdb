@@ -1,10 +1,10 @@
 <template lang="pug">
-category-tree
+CategoryTree
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import CategoryTree from "./category_tree.vue";
+import CategoryTree from "./CategoryTree.vue";
 export default Vue.extend({
   components: {
     CategoryTree

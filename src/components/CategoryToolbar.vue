@@ -16,10 +16,10 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+
 import axios from "axios";
-import { functionDeclaration } from "babel-types";
+
 import { Category, Asset } from "../model";
-import AssetCard from "./asset_card.vue";
 import { ResponseAssetData } from "../interfaces";
 
 export default Vue.extend({
@@ -88,9 +88,6 @@ export default Vue.extend({
   },
   created() {
     this.updateAssets();
-  },
-  components: {
-    AssetCard
   }
 });
 </script>
