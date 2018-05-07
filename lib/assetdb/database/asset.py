@@ -1,14 +1,14 @@
 """Asset database.   """
 
-import mimetypes
-from pathlib import PurePath
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import relationship
 
-from . import exceptions
-from .. import setting
-from .category import Category
-from .core import Base, Path, session_scope
+from .core import Base
+
+ASSET_FILE = Table('Asset_File', Base.metadata,
+                   Column('asset_id', Integer, ForeignKey('Asset.id')),
+                   Column('file_id', Integer, ForeignKey('File.id')))
 
 
 class Asset(Base):
@@ -17,10 +17,10 @@ class Asset(Base):
     __tablename__ = 'Asset'
     id = Column(Integer, primary_key=True)
     category_id = Column(Integer, ForeignKey('Category.id'))
+    category = relationship('Category', back_populates='assets')
     name = Column(String)
-    path = Column(Path, unique=True)
-    memetype = Column(String)
     description = Column(String)
+    files = relationship('File', secondary=ASSET_FILE)
 
     def to_tuple(self):
         """Convert asset to tuple, for frontend.  """
@@ -28,55 +28,5 @@ class Asset(Base):
             self.id,
             self.category_id,
             self.name,
-            self.path and self.path.as_posix(),
-            self.memetype,
             self.description
         )
-
-    @staticmethod
-    def add(path, session, name=None):
-        """Add new asset from path
-
-        Args:
-            path (str): Asset path.
-            session (sqlalchemy.orm.session.Session): Database session.
-            name (str, optional): Defaults to None. Asset name as a label.
-
-        Raises:
-            exceptions.PathError: When path is outside the root directory.
-            exceptions.DuplicatePathError: When path already in database.
-        """
-
-        path = PurePath(path)
-        name = name or path.name
-        memetype, _ = mimetypes.guess_type(path.as_posix())
-        category_path = path.parent.relative_to(setting.ROOT).as_posix()
-
-        try:
-            path = path.relative_to(setting.ROOT)
-        except ValueError:
-            raise exceptions.PathError(path)
-
-        if session.query(Asset).filter(Asset.path == path).first():
-            raise exceptions.DuplicatePathError
-
-        category = session.query(Category).filter(
-            Category.path == category_path).one()
-        asset = Asset(
-            category_id=category.id,
-            name=name,
-            path=path,
-            memetype=memetype
-        )
-        session.add(asset)
-
-
-def add_assets(filenames):
-    """Add many assets.  """
-
-    with session_scope() as sess:
-        for i in filenames:
-            try:
-                Asset.add(i, sess)
-            except (exceptions.PathError, exceptions.DuplicatePathError):
-                continue
