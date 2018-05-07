@@ -1,9 +1,27 @@
-from pathlib import Path, PurePath
-from .. import setting
-from .core import cursor
+"""Database category table.  """
+from pathlib import PurePath
 
-TABLE_NAME = 'Category'
-COLUMNS = ('id', 'parent_id', 'name', 'path')
+from sqlalchemy import Column, ForeignKey, Integer, String
+
+from .. import setting
+from .core import Base, Path, session_scope
+from . import exceptions
+
+
+class Category(Base):
+    """Category table.  """
+    __tablename__ = 'Category'
+    id = Column(Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('Category.id'))
+    name = Column(String)
+    path = Column(Path, unique=True)
+
+    def to_tuple(self):
+        """Serialize"""
+        return (self.id,
+                self.parent_id,
+                self.name,
+                self.path and self.path.as_posix())
 
 
 def add_category(dirpath, name=None):
@@ -14,33 +32,29 @@ def add_category(dirpath, name=None):
         name (str, optional): Defaults to None. Category name.
     """
 
-    with cursor() as c:
-        dirpath = PurePath(dirpath)
-        path = dirpath.relative_to(setting.ROOT).as_posix()
-        parent_id = None
-        try:
-            parent_path = dirpath.parent.relative_to(
-                setting.ROOT).as_posix()
-            c.execute(
-                f'SELECT id FROM {TABLE_NAME} WHERE path=?', (parent_path,))
-            result = c.fetchone()
-            if result:
-                parent_id = result[0]
-        except ValueError:
-            pass
+    dirpath = PurePath(dirpath)
+    name = name or dirpath.name
 
-        name = name or dirpath.name
-        data = (path, name, parent_id)
-        c.execute(
-            f'INSERT INTO {TABLE_NAME}(path, name, parent_id) VALUES (?,?,?)', data)
+    try:
+        path = dirpath.relative_to(setting.ROOT)
+    except ValueError:
+        raise exceptions.PathError(path)
 
+    with session_scope() as sess:
+        if sess.query(Category).filter(Category.path == path).first():
+            raise exceptions.DuplicatePathError
 
-def setup():
-    with cursor() as c:
-        c.execute('CREATE TABLE IF NOT EXISTS '
-                  f'{TABLE_NAME} ('
-                  'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                  f'parent_id INTEGER REFERENCES {TABLE_NAME}(id),'
-                  'name TEXT,'
-                  'path TEXT UNIQUE'
-                  ')',)
+        if PurePath(dirpath) == PurePath(setting.ROOT):
+            parent_id = None
+        else:
+            parent_path = dirpath.parent.relative_to(setting.ROOT)
+            parent = sess.query(Category).filter(
+                Category.path == parent_path).one_or_none()
+            parent_id = parent.id
+
+        category = Category(
+            parent_id=parent_id,
+            name=name,
+            path=path,
+        )
+        sess.add(category)

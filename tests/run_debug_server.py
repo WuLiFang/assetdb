@@ -1,10 +1,10 @@
-
+"""Start development server."""
 import logging
-import sys
+# import sys
 
 from assetdb.database.util import setup
 from assetdb.views import APP
-from assetdb.wsgi import serve
+# from assetdb.wsgi import serve
 from util import set_debug_settings
 
 

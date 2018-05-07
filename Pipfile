@@ -14,6 +14,7 @@ flask = "*"
 gevent = "*"
 raven = {extras = ["flask"]}
 flask-restful = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.6"

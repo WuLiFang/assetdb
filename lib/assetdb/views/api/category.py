@@ -2,17 +2,15 @@
 
 import logging
 import os
-import sqlite3
 from pathlib import PurePath
 
-from flask import abort, jsonify, redirect, request, url_for
-from flask_restful import Resource
+from flask import redirect, request, url_for
+from flask_restful import Resource, reqparse
 from werkzeug.utils import secure_filename
 
-from ... import util
-from ...database import asset, category
+from ... import database, util
 from ..app import API
-from ..connection import get_conn
+from .core import database_session
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,36 +18,28 @@ LOGGER = logging.getLogger(__name__)
 class Category(Resource):
     """API for category.  """
 
-    url = '/api/category'
-
     @staticmethod
     def get():
         """Get all category from database.   """
 
-        with get_conn() as conn:
-            c = conn.cursor()
-            c.execute('SELECT id, parent_id, name, path FROM category')
-            ret = c.fetchall()
-        LOGGER.debug(ret)
-        return jsonify(ret)
+        with database_session() as sess:
+            return [i.to_tuple() for i in sess.query(database.Category).all()]
 
     @staticmethod
     def post():
         """Create new category.  """
 
-        data = request.get_json()
-        data = (data['path'], data['name'], data['parent_id'])
-        if not all(data):
-            abort(400, 'Invalid data.')
+        parser = reqparse.RequestParser()
+        parser.add_argument('path', required=True)
+        parser.add_argument('name', required=True)
+        parser.add_argument('parent_id', required=True)
+        args = parser.parse_args()
 
-        conn = get_conn()
-        c = conn.cursor()
-        try:
-            c.execute(
-                f'INSERT INTO {category.TABLE_NAME}(path, name, parent_id) VALUES (?,?,?)', data)
-        except sqlite3.IntegrityError as ex:
-            return str(ex), 400
-        conn.commit()
+        with database_session() as sess:
+            item = database.Category(
+                path=args.path, name=args.name, parent_id=args.parent_id)
+            sess.add(item)
+
         return 'ok'
 
 
@@ -60,40 +50,42 @@ class CategoryFromId(Resource):
     """API for category from id.  """
 
     @staticmethod
-    def get(id_):
+    def get_category(id_, session) -> database.Category:
+        """Get category from id.
+
+        Args:
+            id_ (str): Category ID.
+            session (sqlalchemy.orm.session.Session): Database session.
+
+        Returns:
+            database.Category: The category.
+        """
+
+        return session.query(Category).get(id_)
+
+    @classmethod
+    def get(cls, id_):
         """Get category from database with specific id.   """
 
-        with get_conn() as conn:
-            c = conn.cursor()
-            c.execute(
-                f'SELECT {", ".join(category.COLUMNS)} FROM {category.TABLE_NAME} WHERE id=?',
-                (id_,))
-            ret = c.fetchone()
-        LOGGER.debug(ret)
-        if not ret:
-            LOGGER.warning('Get category failed : %s', id_)
-            abort(404, 'No such category.')
-        return jsonify(ret)
+        with database_session() as sess:
+            return cls.get_category(id_, sess).to_tuple()
 
-    @staticmethod
-    def put(id_):
+    @classmethod
+    def put(cls, id_):
         """Change category info.  """
 
-        data = request.get_json()
-        name = data['name']
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', required=True)
+        args = parser.parse_args()
 
-        conn = get_conn()
-        c = conn.cursor()
-        c.execute(
-            f'UPDATE {category.TABLE_NAME} SET name=? WHERE id=?',
-            (name, id_))
-        conn.commit()
+        with database_session() as sess:
+            item = cls.get_category(id_, sess)
+            item.name = args.name
 
-        LOGGER.debug(data)
         return 'ok'
 
-    @staticmethod
-    def post(id_):
+    @classmethod
+    def post(cls, id_):
         """Post file under category folder.  """
 
         try:
@@ -107,56 +99,45 @@ class CategoryFromId(Resource):
         filename = secure_filename(str(filename))
 
         # Get dir.
-        conn = get_conn()
-        c = conn.cursor()
-        c.execute(
-            f'SELECT path FROM {category.TABLE_NAME} WHERE id=?', (id_,)
-        )
-        dir_ = c.fetchone()[0]
-        path = f'{dir_}/{filename}'
+        with database_session() as sess:
+            item = cls.get_category(id_, sess)
 
-        # Save file.
-        save_path = util.path(path)
-        if os.path.exists(save_path):
-            return 'Filename already inuse', 400
-        LOGGER.debug('New file, save to: %s', save_path)
-        file_.save(str(save_path))
+            dir_ = item.path
+            path = f'{dir_}/{filename}'
 
-        # Add table item.
-        try:
-            data = (id_, name, path, file_.mimetype,
-                    request.form.get('description'))
-            LOGGER.debug('New asset: %s', data)
-            c.execute(
-                'INSERT INTO '
-                f'{asset.TABLE_NAME}(category_id, name, path, memetype, description) '
-                'VALUES (?,?,?,?,?)', data
+            # Save file.
+            save_path = util.path(path)
+            if os.path.exists(save_path):
+                return 'Filename already inuse', 400
+            LOGGER.debug('New file, save to: %s', save_path)
+            file_.save(str(save_path))
+
+            # Add asset item.
+            asset_item = database.Asset(
+                category_id=id_,
+                name=name,
+                path=path,
+                mimetype=file_.mimetype,
+                description=request.form.get('description')
             )
-            conn.commit()
-        except sqlite3.IntegrityError as ex:
-            return str(ex), 400
+            sess.add(asset_item)
 
         return redirect(url_for('get_storage', filename=path))
 
-    @staticmethod
-    def delete(id_):
+    @classmethod
+    def delete(cls, id_):
         """Delete category.  """
-
-        conn = get_conn()
-        c = conn.cursor()
-        c.execute(
-            f'SELECT COUNT(*) FROM {category.TABLE_NAME} WHERE parent_id=?', (id_,))
-        if c.fetchone()[0]:
-            return 'Not empty: child category found.', 400
-        c.execute(
-            f'SELECT COUNT(*) FROM {asset.TABLE_NAME} WHERE category_id=?', (id_,))
-        if c.fetchone()[0]:
-            return 'Not empty: child asset found.', 400
-
-        c.execute(
-            f'DELETE FROM {category.TABLE_NAME} WHERE id=?', (id_,)
-        )
-        conn.commit()
+        with database_session() as sess:
+            item = cls.get_category(id_, sess)
+            child_count = sess.query(database.Category).filter(
+                database.Category.parent_id == item.id).count()
+            if child_count:
+                return f'Not empty: {child_count} child category found.', 400
+            asset_count = sess.query(database.Asset).filter(
+                database.Asset.category_id == item.id).count()
+            if asset_count:
+                return 'Not empty: child asset found.', 400
+            sess.delete(item)
 
         return 'Deleted'
 
@@ -170,16 +151,10 @@ class CategoryAssets(Resource):
     @staticmethod
     def get(id_):
         """Get assets from database with specific category_id.   """
-
-        with get_conn() as conn:
-            c = conn.cursor()
-            c.execute(
-                f'SELECT {", ".join(asset.COLUMNS)} FROM {asset.TABLE_NAME} '
-                f'WHERE category_id=?',
-                (id_,))
-            ret = c.fetchall()
-        LOGGER.debug(ret)
-        return jsonify(ret)
+        with database_session() as sess:
+            result = sess.query(database.Asset).filter(
+                database.Asset.category_id == id_).all()
+            return [i.to_tuple() for i in result]
 
 
 API.add_resource(CategoryAssets, '/category/<id_>/assets')
@@ -192,15 +167,8 @@ class CategoryCount(Resource):
     def get(id_):
         """Get assets from database with specific category_id.   """
 
-        with get_conn() as conn:
-            c = conn.cursor()
-            c.execute(
-                f'SELECT COUNT(*) FROM {asset.TABLE_NAME} '
-                f'WHERE category_id=?',
-                (id_,))
-            ret = c.fetchone()[0]
-        LOGGER.debug(ret)
-        return jsonify(ret)
+        with database_session() as sess:
+            return sess.query(database.Asset).filter(database.Asset.category_id == id_).count()
 
 
 API.add_resource(CategoryCount, '/category/<id_>/count')
