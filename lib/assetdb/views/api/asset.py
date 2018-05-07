@@ -4,28 +4,18 @@ import logging
 from pathlib import Path
 
 from flask import jsonify
+from flask_restful import Resource
 
 from ... import util
 from ...database import asset
-from ..app import APP
+from ..app import API
 from ..connection import get_conn
-from .core import dispatch
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Asset(object):
+class Asset(Resource):
     """API for asset.  """
-
-    url = '/api/asset/<id_>'
-
-    @staticmethod
-    @APP.route(url, endpoint='Asset', methods=('GET', 'POST', 'PUT', 'DELETE'))
-    def dispatch(id_):
-        """Dispatch function call.  """
-
-        return dispatch(Asset, id_)
-
     @staticmethod
     def get(id_):
         """Get asset info from id.   """
@@ -54,3 +44,6 @@ class Asset(object):
         LOGGER.info('Delete asset: %s', id_)
 
         return 'Deleted'
+
+
+API.add_resource(Asset, '/asset/<id_>')

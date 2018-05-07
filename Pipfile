@@ -13,6 +13,7 @@ pytest = "*"
 flask = "*"
 gevent = "*"
 raven = {extras = ["flask"]}
+flask-restful = "*"
 
 [requires]
 python_version = "3.6"

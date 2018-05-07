@@ -6,26 +6,21 @@ import sqlite3
 from pathlib import PurePath
 
 from flask import abort, jsonify, redirect, request, url_for
+from flask_restful import Resource
 from werkzeug.utils import secure_filename
 
 from ... import util
 from ...database import asset, category
-from ..app import APP
+from ..app import API
 from ..connection import get_conn
-from .core import dispatch
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Category(object):
+class Category(Resource):
     """API for category.  """
 
     url = '/api/category'
-
-    @staticmethod
-    @APP.route(url, endpoint='Category', methods=('GET', 'POST'))
-    def _dispatch():
-        return dispatch(Category)
 
     @staticmethod
     def get():
@@ -58,15 +53,11 @@ class Category(object):
         return 'ok'
 
 
-class CategoryFromId(object):
+API.add_resource(Category, '/category')
+
+
+class CategoryFromId(Resource):
     """API for category from id.  """
-
-    url = '/api/category/<id_>'
-
-    @staticmethod
-    @APP.route(url, endpoint='CategoryFromId', methods=('GET', 'POST', 'PUT', 'DELETE'))
-    def _dispatch(id_):
-        return dispatch(CategoryFromId, id_)
 
     @staticmethod
     def get(id_):
@@ -169,9 +160,15 @@ class CategoryFromId(object):
 
         return 'Deleted'
 
+
+API.add_resource(CategoryFromId, '/category/<id_>')
+
+
+class CategoryAssets(Resource):
+    """Api for category assets.  """
+
     @staticmethod
-    @APP.route(f'{url}/assets/', methods=('GET',))
-    def get_assets(id_):
+    def get(id_):
         """Get assets from database with specific category_id.   """
 
         with get_conn() as conn:
@@ -184,9 +181,15 @@ class CategoryFromId(object):
         LOGGER.debug(ret)
         return jsonify(ret)
 
+
+API.add_resource(CategoryAssets, '/category/<id_>/assets')
+
+
+class CategoryCount(Resource):
+    """Api for category asset count.  """
+
     @staticmethod
-    @APP.route(f'{url}/count/', methods=('GET',))
-    def get_count(id_):
+    def get(id_):
         """Get assets from database with specific category_id.   """
 
         with get_conn() as conn:
@@ -198,3 +201,6 @@ class CategoryFromId(object):
             ret = c.fetchone()[0]
         LOGGER.debug(ret)
         return jsonify(ret)
+
+
+API.add_resource(CategoryCount, '/category/<id_>/count')
