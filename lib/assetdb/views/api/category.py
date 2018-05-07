@@ -23,7 +23,7 @@ class Category(Resource):
         """Get all category from database.   """
 
         with database_session() as sess:
-            return [i.to_tuple() for i in sess.query(database.Category).all()]
+            return [i.serialize() for i in sess.query(database.Category).all()]
 
     @staticmethod
     def post():
@@ -68,7 +68,7 @@ class CategoryFromId(Resource):
         """Get category from database with specific id.   """
 
         with database_session() as sess:
-            return cls.get_category(id_, sess).to_tuple()
+            return cls.get_category(id_, sess).serialize()
 
     @classmethod
     def put(cls, id_):
@@ -154,7 +154,7 @@ class CategoryAssets(Resource):
         with database_session() as sess:
             result = sess.query(database.Asset).filter(
                 database.Asset.category_id == id_).all()
-            return [i.to_tuple() for i in result]
+            return [i.serialize() for i in result]
 
 
 API.add_resource(CategoryAssets, '/category/<id_>/assets')

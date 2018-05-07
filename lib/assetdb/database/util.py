@@ -11,6 +11,8 @@ from .core import session_scope
 from . import core
 from .file import File
 
+from .. import mimecheck
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -35,12 +37,23 @@ def add_asset(filenames, session, name, category_id):
             continue
         item = File.add(path, session)
         files.append(item)
+
+    if not files:
+        return
+
+    try:
+        thumb = next(i for i in files
+                     if mimecheck.is_mimetype(i.path, 'image'))
+    except StopIteration:
+        thumb = None
+
     session.add_all(files)
 
     asset = Asset(
         category_id=category_id,
         name=name,
         files=files,
+        thumbnail=thumb
     )
     session.add(asset)
 

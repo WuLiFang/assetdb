@@ -20,10 +20,10 @@ export default Vue.extend({
   },
   computed: {
     preview_url(): string {
-      return `/storage/${this.asset.path}`;
+      return `/storage/id/${this.asset.thumbnail_id}`;
     },
     fileURL(): string {
-      return `${this.$store.state.root}/${this.asset.path}`;
+      return `${this.$store.state.root}/${this.asset.thumbnail_id}`;
     }
   },
   methods: {

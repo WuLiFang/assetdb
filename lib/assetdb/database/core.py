@@ -49,6 +49,23 @@ class Path(TypeDecorator):
         return value
 
 
+class SerializableMixin(object):
+    """Mixin for serialization.   """
+
+    # pylint: disable=too-few-public-methods
+
+    @classmethod
+    def _encode(cls, obj):
+        if isinstance(obj, PurePath):
+            return obj.as_posix()
+        return obj
+
+    def serialize(self):
+        """Serialize sqlalchemy object to dictionary.  """
+
+        return {i.name: self._encode(getattr(self, i.name)) for i in self.__table__.columns}
+
+
 def setup(engine_uri=None):
     engine_uri = engine_uri or setting.ENGINE_URI
     LOGGER.debug('Bind to engine: %s', engine_uri)

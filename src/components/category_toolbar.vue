@@ -20,6 +20,7 @@ import axios from "axios";
 import { functionDeclaration } from "babel-types";
 import { Category, Asset } from "../model";
 import AssetCard from "./asset_card.vue";
+import { ResponseAssetData } from "../interfaces";
 
 export default Vue.extend({
   props: ["category"],
@@ -50,7 +51,7 @@ export default Vue.extend({
       axios
         .get(`/api/category/${this.category.id}/assets`)
         .then(response => {
-          (<Array<Array<string>>>response.data).forEach(element => {
+          (<Array<ResponseAssetData>>response.data).forEach(element => {
             let asset = Asset.from_data(element);
             assets.push(asset);
           });

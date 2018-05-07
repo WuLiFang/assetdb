@@ -5,18 +5,18 @@ import mimetypes
 from sqlalchemy import Column, Integer, String
 
 from .. import exceptions
-from .core import Base, Path
+from .core import Base, Path, SerializableMixin
 from ..filetools import relpath
 
 
-class File(Base):
+class File(Base, SerializableMixin):
     """File table.  """
 
     __tablename__ = 'File'
     id = Column(Integer, primary_key=True)
     label = Column(String)
     path = Column(Path, unique=True)
-    memetype = Column(String)
+    mimetype = Column(String)
 
     @classmethod
     def add(cls, filename, session, label=None):
@@ -40,11 +40,11 @@ class File(Base):
             raise exceptions.DuplicatePathError
 
         label = label or path.name
-        memetype, _ = mimetypes.guess_type(path.as_posix())
+        mimetype, _ = mimetypes.guess_type(path.as_posix())
         item = cls(
             path=path,
             label=label,
-            memetype=memetype,
+            mimetype=mimetype,
         )
         session.add(item)
         return item
@@ -56,5 +56,5 @@ class File(Base):
             self.id,
             self.name,
             self.path and self.path.as_posix(),
-            self.memetype
+            self.mimetype
         )

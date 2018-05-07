@@ -1,4 +1,5 @@
 // TODO: Refactor `CategoryStorage`
+import { ResponseAssetData, ResponseCategoryData } from './interfaces';
 export class CategoryStorage extends Array<Category>{ }
 
 export class Category {
@@ -9,8 +10,8 @@ export class Category {
         public name: string,
         public path: string) {
     }
-    static from_data(data: Array<string>) {
-        return new Category(data[0], data[1], data[2], data[3])
+    static from_data(data: ResponseCategoryData) {
+        return new Category(data.id, data.parent_id, data.name, data.path)
     }
 
 }
@@ -23,12 +24,11 @@ export class Asset {
         public id: string,
         public category_id: string,
         public name: string,
-        public path: string,
-        public mimetype: string,
-        public description: string,
+        public thumbnail_id: string | null,
+        public description: string | null,
     ) {
     }
-    static from_data(data: Array<string>) {
-        return new Asset(data[0], data[1], data[2], data[3], data[4], data[5])
+    static from_data(data: ResponseAssetData) {
+        return new Asset(data.id, data.category_id, data.name, data.thumbnail_id, data.description)
     }
 }

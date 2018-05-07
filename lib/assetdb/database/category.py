@@ -5,13 +5,14 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .. import setting
-from .core import Base, Path
+from .core import Base, Path, SerializableMixin
 from .. import exceptions
 from ..filetools import relpath
 
 
-class Category(Base):
+class Category(Base, SerializableMixin):
     """Category table.  """
+
     __tablename__ = 'Category'
     id = Column(Integer, primary_key=True)
     parent_id = Column(Integer, ForeignKey(f'{__tablename__}.id'))
@@ -23,13 +24,6 @@ class Category(Base):
     name = Column(String)
     path = Column(Path, unique=True)
     assets = relationship('Asset', back_populates='category')
-
-    def to_tuple(self):
-        """Serialize"""
-        return (self.id,
-                self.parent_id,
-                self.name,
-                self.path and self.path.as_posix())
 
     @classmethod
     def add(cls, dirpath, session, name=None):
