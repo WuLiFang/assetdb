@@ -1,8 +1,8 @@
 <template lang="pug">
-  el-card
-    img(v-if='thumbnailURL' :src="thumbnailURL" @dragstart.capture="onDragStart($event)")
-    div {{asset.name}}
-    router-link(:to="routeURL") 详情
+  router-link(:to="routeURL")
+    el-card
+      img(v-if='thumbnailURL' :src="thumbnailURL" @dragstart.capture="onDragStart($event)")
+      div {{asset.name}}
 </template>
 
 <script lang="ts">

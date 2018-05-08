@@ -1,10 +1,10 @@
 <template lang="pug">
-  el-card
-    .display(draggable @dragstart.stop="onDragStart($event)")
-      video(v-if='srcURL' :src='srcURL' :poster='posterURL')
-      img(v-else-if='posterURL' :src="posterURL")
-    div {{file.name}}
-    router-link(:to="routeURL") 详情
+  router-link(:to="routeURL")
+    el-card
+      .display(draggable @dragstart.stop="onDragStart($event)")
+        video(v-if='srcURL' :src='srcURL' :poster='posterURL')
+        img(v-else-if='posterURL' :src="posterURL")
+      div {{file.name}}
 </template>
 
 <script lang="ts">
