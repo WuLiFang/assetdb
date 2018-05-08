@@ -159,7 +159,7 @@ export default Vue.extend({
         );
     },
     deleteCategory(category: Category) {
-      let payload: mutations.PayloadCategoryId = { id: category.id };
+      let payload: mutations.PayloadCategoryID = { id: category.id };
       this.$store
         .dispatch(mutations.DELETE_CATEGORY, payload)
         .then(response => {
@@ -181,7 +181,7 @@ export default Vue.extend({
         return;
       }
       CategoryUtil.getChildren(category).forEach(value => {
-        let payload: mutations.PayloadCategoryId = { id: value.id };
+        let payload: mutations.PayloadCategoryID = { id: value.id };
         this.$store.dispatch(mutations.COUNT_CATEGORY, payload);
       });
       CategoryUtil.getRelated(category).forEach(value => this.expand(value.id));

@@ -46,7 +46,7 @@ export default Vue.extend({
   },
   methods: {
     updateFiles() {
-      let payload: mutations.PayloadAssetId = { id: this.asset.id };
+      let payload: mutations.PayloadAssetID = { id: this.asset.id };
       this.$store.dispatch(mutations.UPDATE_ASSET_FILES);
       let assets: Array<Asset> = [];
       this.assets = assets;

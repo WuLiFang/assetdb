@@ -84,7 +84,7 @@ const store = new Vuex.Store(
                     () => context.dispatch(mutations.UPDATE_CATEGORIES)
                 )
             },
-            async [mutations.COUNT_CATEGORY](context, payload: mutations.PayloadCategoryId) {
+            async [mutations.COUNT_CATEGORY](context, payload: mutations.PayloadCategoryID) {
                 return axios.get(`/api/category/${payload.id}/count`).then(
                     response => {
                         let _payload: mutations.PayloadSetCategory = { id: payload.id, count: response.data }
@@ -92,12 +92,12 @@ const store = new Vuex.Store(
                     }
                 )
             },
-            async [mutations.DELETE_CATEGORY](context, payload: mutations.PayloadCategoryId) {
+            async [mutations.DELETE_CATEGORY](context, payload: mutations.PayloadCategoryID) {
                 return axios.delete(`/api/category/${payload.id}`).then(
                     () => context.dispatch(mutations.UPDATE_CATEGORIES)
                 )
             },
-            async [mutations.LOAD_ASSETS](context, payload: mutations.PayloadCategoryId) {
+            async [mutations.LOAD_ASSETS](context, payload: mutations.PayloadCategoryID) {
                 return axios
                     .get(`/api/category/${payload.id}/assets`)
                     .then(
@@ -109,7 +109,7 @@ const store = new Vuex.Store(
                         }
                     )
             },
-            async [mutations.LOAD_ASSET](context, payload: mutations.PayloadAssetId) {
+            async [mutations.LOAD_ASSET](context, payload: mutations.PayloadAssetID) {
                 return axios.get(`/api/asset/${payload.id}`).then(
                     response => {
                         let data = <ResponseAssetData>response.data
@@ -119,7 +119,7 @@ const store = new Vuex.Store(
                     }
                 )
             },
-            async [mutations.UPDATE_ASSET_FILES](context, payload: mutations.PayloadAssetId) {
+            async [mutations.UPDATE_ASSET_FILES](context, payload: mutations.PayloadAssetID) {
                 return axios.get(`/api/asset/${payload.id}/files`).then(
                     response => {
                         let data = <Array<ResponseAssetFileData>>response.data
@@ -128,6 +128,16 @@ const store = new Vuex.Store(
                         context.commit(mutations.LOAD_ASSET_FILES, files_payload)
                         let asset_payload: mutations.PayloadUpdateAssetFiles = { id: payload.id, files }
                         context.commit(mutations.UPDATE_ASSET_FILES, asset_payload)
+                    }
+                )
+            },
+            async [mutations.LOAD_ASSET_FILE](context, payload: mutations.PayloadAssetFileID) {
+                return axios.get(`/api/file/${payload.id}`).then(
+                    response => {
+                        let data = <ResponseAssetFileData>response.data
+                        let files = [AssetFile.from_data(data)]
+                        let files_payload: mutations.PayloadLoadAssetFiles = { files }
+                        context.commit(mutations.LOAD_ASSET_FILES, files_payload)
                     }
                 )
             }

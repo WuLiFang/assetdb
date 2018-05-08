@@ -42,7 +42,7 @@ export default Vue.extend({
     updateAssets() {
       this.isLoading = true;
       this.message = "读取中...";
-      let payload: mutations.PayloadCategoryId = { id: this.category.id };
+      let payload: mutations.PayloadCategoryID = { id: this.category.id };
       this.$store
         .dispatch(mutations.LOAD_ASSETS, payload)
         .then(response => {
