@@ -48,13 +48,3 @@ class File(Base, SerializableMixin):
         )
         session.add(item)
         return item
-
-    def to_tuple(self):
-        """Convert asset to tuple, for frontend.  """
-
-        return (
-            self.id,
-            self.name,
-            self.path and self.path.as_posix(),
-            self.mimetype
-        )

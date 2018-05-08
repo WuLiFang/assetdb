@@ -4,7 +4,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
 
-from .core import Base, Path, SerializableMixin
+from .core import Base, SerializableMixin
 
 ASSET_FILE = Table('Asset_File', Base.metadata,
                    Column('asset_id', Integer, ForeignKey('Asset.id')),
