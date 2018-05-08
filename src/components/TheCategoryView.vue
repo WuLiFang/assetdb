@@ -12,7 +12,7 @@
             div 路径: {{category.path}}
         CategoryToolbar(:category="category" class='toolbar')
       el-main
-        AssetsView(:category="category")
+        CategoryAssetsView(:category="category")
 </template>
 
 <script lang="ts">
@@ -21,7 +21,7 @@ import Vue from "vue";
 import * as _ from "lodash";
 import axios from "axios";
 
-import AssetsView from "./AssetsView.vue";
+import CategoryAssetsView from "./CategoryAssetsView.vue";
 import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
 import CategoryTree from "./CategoryTree.vue";
 import CategoryToolbar from "./CategoryToolbar.vue";
@@ -53,7 +53,7 @@ export default Vue.extend({
     }, 2000)
   },
   components: {
-    AssetsView,
+    CategoryAssetsView,
     CategoryBreadcrumb,
     CategoryTree,
     CategoryToolbar

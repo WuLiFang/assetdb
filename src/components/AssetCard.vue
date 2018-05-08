@@ -1,11 +1,8 @@
 <template lang="pug">
-  el-card(v-if="!isDeleted")
-    div(class="toolbar-container")
-      div(class="toolbar")
-        el-button(icon='el-icon-delete' type="danger" size="mini" @click="deleteAsset")
-    img(:src="preview_url" @dragstart.capture="onDragStart($event)")
+  el-card
+    img(v-if='thumbnailURL' :src="thumbnailURL" @dragstart.capture="onDragStart($event)")
     div {{asset.name}}
-    router-link(:to="AssetUtil.url(asset)") 详情
+    router-link(:to="routeURL") 详情
 </template>
 
 <script lang="ts">
@@ -22,8 +19,15 @@ export default Vue.extend({
     return { isDeleted: false, AssetUtil };
   },
   computed: {
-    preview_url(): string {
-      return `/storage/id/${this.asset.thumbnail_id}`;
+    routeURL(): string {
+      return AssetUtil.url(this.asset);
+    },
+    thumbnailURL(): string | null {
+      let id = this.asset.thumbnail_id;
+      if (!id) {
+        return null;
+      }
+      return `/storage/id/${id}`;
     },
     fileURL(): string {
       return `${this.$store.state.root}/${this.asset.thumbnail_id}`;

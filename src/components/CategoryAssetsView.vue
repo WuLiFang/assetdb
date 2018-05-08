@@ -1,9 +1,7 @@
 <template lang="pug">
-  el-container
-    el-main(v-loading='isLoading')
-      div(v-if="assets.length > 0" class="cards")
-        AssetCard(v-for='asset in assets', :key='asset.id', :asset="asset")
-      div(v-else, v-html="message")
+    div.cards
+      div(v-if="assets.length === 0") 空的
+      AssetCard(v-for='asset in assets', :key='asset.id', :asset="asset")
 </template>
 
 <script lang="ts">
@@ -23,7 +21,6 @@ export default Vue.extend({
   data() {
     return {
       assets: new Array<Asset>(),
-      message: "",
       isLoading: true,
       isShowDialog: false,
       assetForm: {
@@ -41,7 +38,6 @@ export default Vue.extend({
   methods: {
     updateAssets() {
       this.isLoading = true;
-      this.message = "读取中...";
       let payload: mutations.PayloadCategoryID = { id: this.category.id };
       this.$store
         .dispatch(mutations.LOAD_ASSETS, payload)
