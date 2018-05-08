@@ -1,10 +1,13 @@
-import axios from "axios";
-import * as _ from "lodash";
 import Vue from "vue";
 import Vuex from 'vuex';
-import { ResponseAssetData, ResponseCategoryData } from './interfaces';
-import { Asset, AssetStorage, Category, CategoryStorage } from "./model";
+
+import * as _ from "lodash";
+import axios from "axios";
+
+import { ResponseAssetData, ResponseCategoryData, ResponseAssetFileData } from './interfaces';
+import { Asset, AssetStorage, Category, CategoryStorage, AssetFileStorage, AssetFile } from "./model";
 import * as mutations from "./mutation-types";
+import { file } from "babel-types";
 
 Vue.use(Vuex);
 
@@ -13,7 +16,8 @@ const store = new Vuex.Store(
         state: {
             categories: <Array<Category>>[],
             root: '',
-            assets: <AssetStorage>{}
+            assets: <AssetStorage>{},
+            files: <AssetFileStorage>{},
         },
         mutations: {
             [mutations.UPDATE_CATEGORIES](state, payload) {
@@ -34,6 +38,17 @@ const store = new Vuex.Store(
             },
             [mutations.LOAD_ASSETS](state, payload: mutations.PayloadLoadAssets) {
                 payload.assets.forEach(value => state.assets[value.id] = value)
+            },
+            [mutations.LOAD_ASSET_FILES](state, payload: mutations.PayloadLoadAssetFiles) {
+                payload.files.forEach(value => state.files[value.id] = value)
+            },
+            [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetFiles) {
+                let asset = state.assets[payload.id]
+                if (!asset) {
+                    console.warn(`Asset not found, id: ${payload.id}`)
+                    return
+                }
+                asset.files = payload.files
             }
         },
         actions: {
@@ -101,6 +116,18 @@ const store = new Vuex.Store(
                         let assets = [Asset.from_data(data)];
                         let payload: mutations.PayloadLoadAssets = { assets }
                         context.commit(mutations.LOAD_ASSETS, payload)
+                    }
+                )
+            },
+            async [mutations.UPDATE_ASSET_FILES](context, payload: mutations.PayloadAssetId) {
+                return axios.get(`/api/asset/${payload.id}/files`).then(
+                    response => {
+                        let data = <Array<ResponseAssetFileData>>response.data
+                        let files = data.map(value => AssetFile.from_data(value))
+                        let files_payload: mutations.PayloadLoadAssetFiles = { files }
+                        context.commit(mutations.LOAD_ASSET_FILES, files_payload)
+                        let asset_payload: mutations.PayloadUpdateAssetFiles = { id: payload.id, files }
+                        context.commit(mutations.UPDATE_ASSET_FILES, asset_payload)
                     }
                 )
             }

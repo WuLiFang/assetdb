@@ -1,12 +1,12 @@
 // TODO: Refactor `CategoryStorage`
-import { ResponseAssetData, ResponseCategoryData } from './interfaces';
+import { ResponseAssetData, ResponseCategoryData, ResponseAssetFileData } from './interfaces';
 export class CategoryStorage extends Array<Category>{ }
 
 export class Category {
     public count: number | null = null;
     constructor(
-        public id: string,
-        public parent_id: string,
+        public id: number,
+        public parent_id: number,
         public name: string,
         public path: string) {
     }
@@ -20,9 +20,10 @@ export interface AssetStorage {
 }
 
 export class Asset {
+    public files: Array<AssetFile> = []
     constructor(
-        public id: string,
-        public category_id: string,
+        public id: number,
+        public category_id: number,
         public name: string,
         public thumbnail_id: string | null,
         public description: string | null,
@@ -30,5 +31,20 @@ export class Asset {
     }
     static from_data(data: ResponseAssetData) {
         return new Asset(data.id, data.category_id, data.name, data.thumbnail_id, data.description)
+    }
+}
+
+export interface AssetFileStorage {
+    [id: string]: AssetFile
+}
+export class AssetFile {
+    constructor(
+        public id: number,
+        public label: string,
+        public path: string,
+        public mimetype: string,
+    ) { }
+    static from_data(data: ResponseAssetFileData) {
+        return new AssetFile(data.id, data.label, data.path, data.mimetype)
     }
 }

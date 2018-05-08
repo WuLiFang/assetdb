@@ -15,23 +15,23 @@ from .core import database_session
 LOGGER = logging.getLogger(__name__)
 
 
+def _get_item(id_, session) -> database.Asset:
+    return session.query(database.Asset).get(id_)
+
+
 class Asset(Resource):
     """API for asset.  """
 
     @staticmethod
-    def _get_item(id_, session):
-        return session.query(database.Asset).get(id_)
-
-    @classmethod
-    def get(cls, id_):
+    def get(id_):
         """Get asset info from id.   """
 
         with database_session() as sess:
-            item = cls._get_item(id_, sess)
+            item = _get_item(id_, sess)
             return item.serialize()
 
-    @classmethod
-    def post(cls, id_):
+    @staticmethod
+    def post(id_):
         """Post file under category folder.  """
 
         try:
@@ -46,7 +46,7 @@ class Asset(Resource):
 
         # Get dir.
         with database_session() as sess:
-            item = cls._get_item(id_, sess)
+            item = _get_item(id_, sess)
 
             dir_ = item.path
             path = f'{dir_}/{filename}'
@@ -70,15 +70,26 @@ class Asset(Resource):
 
         return redirect(url_for('get_storage', filename=path))
 
-    @classmethod
-    def delete(cls, id_):
+    @staticmethod
+    def delete(id_):
         """Delete a asset.  """
 
         with database_session() as sess:
-            item = cls._get_item(id_, sess)
+            item = _get_item(id_, sess)
             sess.delete(item)
 
         return 'Deleted'
 
 
 API.add_resource(Asset, '/asset/<id_>')
+
+
+class AssetFiles(Resource):
+    @staticmethod
+    def get(id_):
+        with database_session() as sess:
+            item = _get_item(id_, sess)
+            return [i.serialize() for i in item.files]
+
+
+API.add_resource(AssetFiles, '/asset/<id_>/files')

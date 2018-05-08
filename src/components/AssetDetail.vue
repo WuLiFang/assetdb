@@ -4,7 +4,7 @@
       CategoryBreadcrumb(:category="parentCategory") 
         el-breadcrumb-item 
           span {{asset.name}}
-    div WIP
+    div {{asset.description}}
 </template>
 
 <script lang="ts">

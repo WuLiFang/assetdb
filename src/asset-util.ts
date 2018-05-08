@@ -1,4 +1,4 @@
-import { Asset, AssetStorage } from "./model";
+import { Asset, AssetStorage, AssetFile } from "./model";
 import store from "./store";
 import * as _ from "lodash";
 

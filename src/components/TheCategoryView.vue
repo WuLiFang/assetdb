@@ -33,8 +33,8 @@ export default Vue.extend({
     categories(): CategoryStorage {
       return this.$store.state.categories;
     },
-    id(): string {
-      return this.$route.params.id;
+    id(): number {
+      return Number(this.$route.params.id);
     },
     category(): Category | undefined {
       return _.find(this.categories, value => value.id == this.id);

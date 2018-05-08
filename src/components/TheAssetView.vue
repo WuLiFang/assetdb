@@ -1,5 +1,7 @@
 <template lang="pug">
-  AssetDetail(v-if="asset", :asset="asset")
+  div(v-if="asset")
+    AssetDetail(:asset="asset")
+    FileCard(v-for="file in asset.files" :file="file" :key='file.id')
   div(v-else v-loading="isLoading") {{placeholder}}
 </template>
 <script lang="ts">
@@ -9,6 +11,7 @@ import { AxiosError, AxiosResponse } from "axios";
 
 import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
 import AssetDetail from "./AssetDetail.vue";
+import FileCard from "./FileCard.vue";
 
 import { Asset, AssetStorage } from "../model";
 import AssetUtil from "../asset-util";
@@ -24,8 +27,8 @@ export default Vue.extend({
     };
   },
   computed: {
-    id(): string {
-      return this.$route.params.id;
+    id(): number {
+      return Number(this.$route.params.id);
     }
   },
   methods: {
@@ -37,8 +40,15 @@ export default Vue.extend({
       this.isLoading = true;
       this.$store
         .dispatch(mutations.LOAD_ASSET, payload)
+        .then(repsonse => {
+          this.$store.dispatch(mutations.UPDATE_ASSET_FILES, payload);
+        })
         .then(response => {
-          this.$notify({ title: "读取资产", message: "成功", type: "success" });
+          this.$notify({
+            title: "读取资产信息",
+            message: "成功",
+            type: "success"
+          });
           let asset: Asset | undefined = AssetUtil.storage[this.id];
           if (!asset) {
             this.placeholder = "无此资产";
@@ -62,7 +72,8 @@ export default Vue.extend({
     this.setup();
   },
   components: {
-    AssetDetail
+    AssetDetail,
+    FileCard
   }
 });
 </script>

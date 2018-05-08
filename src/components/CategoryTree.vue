@@ -75,7 +75,7 @@ export default Vue.extend({
           value => value.parent_id == category.id
         );
         return {
-          id: category.id,
+          id: String(category.id),
           label: category.name,
           category: category,
           children: _.map(children, value => getModel(value))
@@ -176,7 +176,7 @@ export default Vue.extend({
     },
     matchCurrent() {
       let id = this.$route.params.id;
-      let category = CategoryUtil.getCategory(id);
+      let category = CategoryUtil.getCategory(Number(id));
       if (!category) {
         return;
       }
@@ -186,7 +186,7 @@ export default Vue.extend({
       });
       CategoryUtil.getRelated(category).forEach(value => this.expand(value.id));
     },
-    expand(id: string) {
+    expand(id: number) {
       let tree = <ElTree>this.$refs.tree;
       interface _TreeNode extends TreeNode {
         expanded: boolean;

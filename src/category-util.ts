@@ -21,7 +21,7 @@ export default class CategoryUtil {
     }
     static getRelated(category: Category): Category[] {
         let ret: Category[] = [];
-        let parent_id: string;
+        let parent_id: number;
         let parent: Category | undefined;
         let current = category
 
@@ -37,7 +37,7 @@ export default class CategoryUtil {
         ret.reverse();
         return ret;
     }
-    static getCategory(id: string): Category | undefined {
+    static getCategory(id: number): Category | undefined {
         return _.find(this.categories, value => value.id == id);
     }
     static getChildren(category: Category): Category[] {
