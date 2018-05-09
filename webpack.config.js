@@ -60,4 +60,5 @@ module.exports = {
         },
         publicPath: '/static/',
     },
+    devtool: 'source-map',
 };

@@ -41,7 +41,7 @@ export default Vue.extend({
       let payload: mutations.PayloadAssetFileID = { id: this.id };
       this.isLoading = true;
       this.$store
-        .dispatch(mutations.LOAD_ASSET_FILE, payload)
+        .dispatch(mutations.UPDATE_ASSET_FILE, payload)
         .then(repsonse => {
           this.$store.dispatch(mutations.UPDATE_ASSET_FILES, payload);
         })

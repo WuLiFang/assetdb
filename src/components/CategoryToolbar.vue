@@ -47,7 +47,7 @@ export default Vue.extend({
     updateAssets() {
       let payload: mutations.PayloadCategoryID = { id: this.category.id };
       this.$store
-        .dispatch(mutations.LOAD_ASSETS, payload)
+        .dispatch(mutations.UPDATE_ASSETS, payload)
         .then(() => {
           this.$message({ message: "更新资产列表成功", type: "success" });
         })

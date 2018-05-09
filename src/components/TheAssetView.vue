@@ -6,7 +6,7 @@
           div.cards
             FileCard(v-for="file in asset.files" :file="file" :key='file.id')
         el-tab-pane(label='管理')
-          div WIP(the-asset-view)
+          AssetManagePane(:asset='asset')
   div(v-else) {{placeholderText}}
 </template>
 <script lang="ts">
@@ -16,6 +16,7 @@ import { AxiosError, AxiosResponse } from "axios";
 
 import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
 import AssetDetail from "./AssetDetail.vue";
+import AssetManagePane from "./AssetManagePane.vue";
 import FileCard from "./FileCard.vue";
 
 import { Asset, AssetStorage } from "../model";
@@ -44,9 +45,9 @@ export default Vue.extend({
       let payload: mutations.PayloadAssetID = { id: this.id };
       this.isLoading = true;
       this.$store
-        .dispatch(mutations.LOAD_ASSET, payload)
+        .dispatch(mutations.UPDATE_ASSET, payload)
         .then(repsonse => {
-          this.$store.dispatch(mutations.UPDATE_ASSET_FILES, payload);
+          this.$store.dispatch(mutations.UPDATE_ASSET_RELATED_FILES, payload);
         })
         .then(response => {
           this.$notify({
@@ -78,6 +79,7 @@ export default Vue.extend({
   },
   components: {
     AssetDetail,
+    AssetManagePane,
     FileCard
   }
 });

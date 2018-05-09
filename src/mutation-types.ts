@@ -23,30 +23,29 @@ export interface PayloadSetCategory extends PayloadCategoryID {
 }
 
 // Asset mutations.
-export const LOAD_ASSETS = 'load_assets'
-export const LOAD_ASSET = 'load_asset'
-export const UPDATE_ASSET_FILES = 'update_asset_files'
+export const UPDATE_ASSETS = 'update_assets'
+export const UPDATE_ASSET = 'update_asset'
+export const UPDATE_ASSET_RELATED_FILES = 'update_asset_related_files'
 export const ADD_ASSET = 'add_asset'
 export const DELETE_ASSET = 'delete_asset'
 export const EDIT_ASSET = 'edit_asset'
 export interface PayloadAssetID {
     id: number
 }
-export interface PayloadLoadAssets {
+export interface PayloadUpdateAssets {
     assets: Array<Asset>
 }
-export interface PayloadUpdateAssetFiles extends PayloadAssetID {
+export interface PayloadUpdateAssetRelatedFiles extends PayloadAssetID {
     files: Array<AssetFile>
 }
 
 // Asset file mutations
-
-export const LOAD_ASSET_FILES = 'load_asset_files'
-export const LOAD_ASSET_FILE = 'load_asset_file'
+export const UPDATE_ASSET_FILES = 'update_asset_files'
+export const UPDATE_ASSET_FILE = 'update_asset_file'
 
 export interface PayloadAssetFileID {
     id: number
 }
-export interface PayloadLoadAssetFiles {
+export interface PayloadUpdateAssetFiles {
     files: Array<AssetFile>
 }

@@ -1,5 +1,6 @@
 <template lang="pug">
-  router-link.file-card(:to="routeURL")
+  //- router-link.file-card(:to="routeURL")
+  .file-card
     el-card
       .display(draggable @dragstart.stop="onDragStart($event)")
         video(v-if='srcURL' :src='srcURL' :poster='posterURL')

@@ -36,13 +36,13 @@ const store = new Vuex.Store(
                     category.count = payload.count
                 }
             },
-            [mutations.LOAD_ASSETS](state, payload: mutations.PayloadLoadAssets) {
+            [mutations.UPDATE_ASSETS](state, payload: mutations.PayloadUpdateAssets) {
                 payload.assets.forEach(value => state.assets[value.id] = value)
             },
-            [mutations.LOAD_ASSET_FILES](state, payload: mutations.PayloadLoadAssetFiles) {
+            [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetFiles) {
                 payload.files.forEach(value => state.files[value.id] = value)
             },
-            [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetFiles) {
+            [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetRelatedFiles) {
                 let asset = state.assets[payload.id]
                 if (!asset) {
                     console.warn(`Asset not found, id: ${payload.id}`)
@@ -97,47 +97,47 @@ const store = new Vuex.Store(
                     () => context.dispatch(mutations.UPDATE_CATEGORIES)
                 )
             },
-            async [mutations.LOAD_ASSETS](context, payload: mutations.PayloadCategoryID) {
+            async [mutations.UPDATE_ASSETS](context, payload: mutations.PayloadCategoryID) {
                 return axios
                     .get(`/api/category/${payload.id}/assets`)
                     .then(
                         response => {
                             let data = <Array<ResponseAssetData>>response.data
                             let assets = (data).map(value => Asset.from_data(value));
-                            let payload: mutations.PayloadLoadAssets = { assets }
-                            context.commit(mutations.LOAD_ASSETS, payload)
+                            let payload: mutations.PayloadUpdateAssets = { assets }
+                            context.commit(mutations.UPDATE_ASSETS, payload)
                         }
                     )
             },
-            async [mutations.LOAD_ASSET](context, payload: mutations.PayloadAssetID) {
+            async [mutations.UPDATE_ASSET](context, payload: mutations.PayloadAssetID) {
                 return axios.get(`/api/asset/${payload.id}`).then(
                     response => {
                         let data = <ResponseAssetData>response.data
                         let assets = [Asset.from_data(data)];
-                        let payload: mutations.PayloadLoadAssets = { assets }
-                        context.commit(mutations.LOAD_ASSETS, payload)
+                        let payload: mutations.PayloadUpdateAssets = { assets }
+                        context.commit(mutations.UPDATE_ASSETS, payload)
                     }
                 )
             },
-            async [mutations.UPDATE_ASSET_FILES](context, payload: mutations.PayloadAssetID) {
+            async [mutations.UPDATE_ASSET_RELATED_FILES](context, payload: mutations.PayloadAssetID) {
                 return axios.get(`/api/asset/${payload.id}/files`).then(
                     response => {
                         let data = <Array<ResponseAssetFileData>>response.data
                         let files = data.map(value => AssetFile.from_data(value))
-                        let files_payload: mutations.PayloadLoadAssetFiles = { files }
-                        context.commit(mutations.LOAD_ASSET_FILES, files_payload)
-                        let asset_payload: mutations.PayloadUpdateAssetFiles = { id: payload.id, files }
+                        let files_payload: mutations.PayloadUpdateAssetFiles = { files }
+                        context.commit(mutations.UPDATE_ASSET_FILES, files_payload)
+                        let asset_payload: mutations.PayloadUpdateAssetRelatedFiles = { id: payload.id, files }
                         context.commit(mutations.UPDATE_ASSET_FILES, asset_payload)
                     }
                 )
             },
-            async [mutations.LOAD_ASSET_FILE](context, payload: mutations.PayloadAssetFileID) {
+            async [mutations.UPDATE_ASSET_FILE](context, payload: mutations.PayloadAssetFileID) {
                 return axios.get(`/api/file/${payload.id}`).then(
                     response => {
                         let data = <ResponseAssetFileData>response.data
                         let files = [AssetFile.from_data(data)]
-                        let files_payload: mutations.PayloadLoadAssetFiles = { files }
-                        context.commit(mutations.LOAD_ASSET_FILES, files_payload)
+                        let files_payload: mutations.PayloadUpdateAssetFiles = { files }
+                        context.commit(mutations.UPDATE_ASSET_FILES, files_payload)
                     }
                 )
             }

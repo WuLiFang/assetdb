@@ -40,7 +40,7 @@ export default Vue.extend({
       this.isLoading = true;
       let payload: mutations.PayloadCategoryID = { id: this.category.id };
       this.$store
-        .dispatch(mutations.LOAD_ASSETS, payload)
+        .dispatch(mutations.UPDATE_ASSETS, payload)
         .then(response => {
           this.assets = _.filter(
             AssetUtil.storage,
