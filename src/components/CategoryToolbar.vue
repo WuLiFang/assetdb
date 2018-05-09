@@ -1,100 +1,98 @@
 <template lang="pug">
   .category-toolbar
-    el-button-group(class="toolbar")
+    el-button-group
       el-button(icon="el-icon-refresh" @click='updateAssets') 刷新
-      el-button(icon="el-icon-plus" @click='isShowDialog = true') 新资产
-    el-dialog(title="创建新资产" :visible.sync="isShowDialog")
-      el-form(:model="assetForm" )
-        el-form-item(label="名称")
-          el-input(v-model="assetForm.name", placeholder="默认使用文件名")
-        el-form-item(label="描述")
-          el-input(v-model="assetForm.description")
-        el-upload(drag multiple class="uploader" :action='`api/category/${category.id}`' :file-list="fileList" :on-error="onUploadError" :on-success="onUploadSuccess" auto-upload=false :data="assetForm")
-          i(class="el-icon-upload")
-          div(class="el-upload__text") 拖拽上传,或
-            em 点击上传
+      el-button(icon="el-icon-edit" @click='isShowCategoryEditDialog = true' type="primary") 编辑
+      el-button(icon="el-icon-plus" @click='isShowCategoryCreationDialog = true' type="primary") 新子分类
+      el-button(icon="el-icon-plus" @click='isShowAssetCreationDialog = true' type="primary") 新资产
+      el-button(icon="el-icon-delete" @click='deleteCategory' :disabled="!allowDelete" type="danger") 删除
+
+    CategoryEditDialog(:category='category' :visible.sync='isShowCategoryEditDialog')
+    CategoryCreationDialog(:category='category' :visible.sync='isShowCategoryCreationDialog')
+    AssetCreationDialog(:category='category' :visible.sync='isShowAssetCreationDialog')
+
 </template>
 <script lang="ts">
 import Vue from "vue";
 
 import axios from "axios";
 
+import CategoryEditDialog from "./CategoryEditDialog.vue";
+import CategoryCreationDialog from "./CategoryCreationDialog.vue";
+import AssetCreationDialog from "./AssetCreationDialog.vue";
+
 import { Category, Asset } from "../model";
 import { ResponseAssetData } from "../interfaces";
+import CategoryUtil from "../category-util";
+import * as mutations from "../mutation-types";
 
 export default Vue.extend({
-  props: ["category"],
+  props: { category: { type: Category } },
   data() {
     return {
-      assets: new Array<Asset>(),
-      message: "",
-      isLoading: true,
-      isShowDialog: false,
-      assetForm: {
-        name: "",
-        description: ""
-      },
-      fileList: []
+      isShowCategoryEditDialog: false,
+      isShowCategoryCreationDialog: false,
+      isShowAssetCreationDialog: false
     };
   },
-  watch: {
-    category: function(newValue, oldValue) {
-      this.updateAssets();
+  computed: {
+    allowDelete(): boolean {
+      return (
+        CategoryUtil.getChildren(this.category).length === 0 &&
+        CategoryUtil.getRecurseCount(this.category) === 0
+      );
     }
   },
   methods: {
     updateAssets() {
-      let assets: Array<Asset> = [];
-      this.assets = assets;
-      this.isLoading = true;
-      this.message = "读取中...";
-      axios
-        .get(`/api/category/${this.category.id}/assets`)
-        .then(response => {
-          (<Array<ResponseAssetData>>response.data).forEach(element => {
-            let asset = Asset.from_data(element);
-            assets.push(asset);
-          });
-          this.message = "<此分类下无资产>";
-          this.isLoading = false;
+      let payload: mutations.PayloadCategoryID = { id: this.category.id };
+      this.$store
+        .dispatch(mutations.LOAD_ASSETS, payload)
+        .then(() => {
+          this.$message({ message: "更新资产列表成功", type: "success" });
         })
         .catch(reason => {
           let message = String(reason);
-          this.message = message;
           this.$notify({
             title: "获取资产列表失败",
             message,
             type: "error"
           });
-          this.isLoading = false;
         });
     },
-    createAsset() {
-      this.isShowDialog = false;
-      console.log(this.fileList);
-    },
-    onUploadError(error: any, fileList: Array<any>) {
-      this.$notify({
-        type: "error",
-        message: String(error),
-        title: "上传失败"
-      });
-      console.log(fileList);
-      return;
-    },
-    onUploadSuccess() {
-      this.assetForm.name = "";
+    deleteCategory() {
+      let payload: mutations.PayloadCategoryID = { id: this.category.id };
+      this.$store
+        .dispatch(mutations.DELETE_CATEGORY, payload)
+        .then(response => {
+          this.$router.push("/");
+          this.$message({ message: "删除分类成功", type: "success" });
+        })
+        .catch(reason =>
+          this.$notify({
+            title: "删除分类失败",
+            message: String(reason),
+            type: "error"
+          })
+        );
     }
   },
-  created() {
-    this.updateAssets();
+  components: {
+    CategoryEditDialog,
+    CategoryCreationDialog,
+    AssetCreationDialog
   }
 });
 </script>
 <style lang="scss" scoped>
-.toolbar {
-  display: flex;
-  justify-content: flex-end;
-  flex: 0 0 auto;
+.category-toolbar {
+  .el-button-group {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    .el-button {
+      flex: 1 1 auto;
+    }
+  }
 }
 </style>

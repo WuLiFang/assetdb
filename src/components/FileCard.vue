@@ -59,7 +59,6 @@ export default Vue.extend({
     word-wrap: break-word;
     margin-bottom: 10px;
     max-height: 100%;
-    // width: 100%;
     text-align: center;
     &:hover {
       .toolbar {

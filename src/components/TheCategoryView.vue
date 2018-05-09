@@ -3,11 +3,6 @@
     CategoryTree.left.hidden-xs-only2
     .right
         CategoryBreadcrumb(:category="category")
-        el-row
-          el-col(:span="12")
-            div ID: {{category.id}}
-          el-col(:span="12")
-            div 路径: {{category.path}}
         CategoryToolbar(:category="category" class='toolbar')
         CategoryAssetsView(:category="category")
 </template>

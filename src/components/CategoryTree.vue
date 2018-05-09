@@ -1,32 +1,23 @@
 <template lang="pug">
   .category-tree
-    el-button-group.toolbar
-      el-button(icon="el-icon-refresh" @click='update' size='mini') 刷新
-      el-button(icon="el-icon-plus" @click='addSubCategory(currentCategory)' size='mini' :disabled="!currentCategory" type="primary") 新子分类
-      el-button(icon="el-icon-edit" @click='isShowDialog = true' size='mini' :disabled="!currentCategory" type="primary") 编辑
-      el-button(icon="el-icon-delete" @click='deleteCategory(currentCategory)' size='mini' :disabled="!allowDelete" type="danger") 删除
-    el-input(placeholder="正则过滤" v-model="filterText" size="mini")
-    el-tree(:data="model" :props="defaultProps"  @current-change="onCurrentChange" node-key="id" ref="tree" :filter-node-method="filterNode" highlight-current=true)
-      span(slot-scope="{node, data}" class="custom-tree-node" @load="onNodeLoad(data)")
+    el-input(
+      v-model="filterText"
+      size="mini"
+      placeholder="正则过滤"
+      prefix-icon="el-icon-search"
+    )
+    el-tree(
+      ref="tree"
+      node-key="id"
+      :data="model"
+      :props="defaultProps"
+      :filter-node-method="filterNode"
+      @current-change="onCurrentChange"
+      highlight-current
+    )
+      span.custom-tree-node(slot-scope="{node, data}" @load="onNodeLoad(data)")
         span {{data.category.name}}
         el-badge(:value="data.category.count")
-        
-
-    el-dialog(v-if="currentCategory" :visible.sync="isShowDialog" :title='currentCategory ? `编辑: ${currentCategory.name}` : ""')
-      el-row
-        el-col(:span="4") 
-          span 父分类
-        el-col(:span="20")
-          el-select(v-model='currentCategory.parent_id' filterable)
-            el-option(v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" :disabled='!CategoryUtil.isLegalParent(currentCategory, category)')
-      el-row
-        el-col(:span="4")
-          span 名称
-        el-col(:span="20")
-          el-input(v-model='currentCategory.name')
-      span(slot='footer')
-        el-button(@click='update();isShowDialog = false') 取消
-        el-button(@click='editCategory(currentCategory);isShowDialog = false' type='primary') 确定
 </template>
 
 <script lang="ts">
@@ -34,7 +25,6 @@ import Vue from "vue";
 import { mapActions } from "vuex";
 
 import * as _ from "lodash";
-import { MessageBoxInputData } from "element-ui/types/message-box";
 import { TreeNode, ElTree } from "element-ui/types/tree";
 import { Tree } from "element-ui";
 
@@ -102,78 +92,6 @@ export default Vue.extend({
       this.currentCategory = data.category;
       this.$router.push(CategoryUtil.url(data.category));
     },
-    addSubCategory(category: Category) {
-      console.log(parent);
-      return this.$prompt("名称", `${category.name}: 新子分类`, {
-        inputPattern: /.+/,
-        inputErrorMessage: "请输入名称"
-      })
-        .then(data => {
-          if (typeof data == "string") {
-            return;
-          }
-          let name = data.value;
-          let parent_id = category.id;
-          let path = `${category.path}/${name}`;
-          let payload: mutations.PayloadAddCategory = {
-            name: data.value,
-            parent_id: category.id,
-            path
-          };
-          this.$store
-            .dispatch(mutations.ADD_CATEGORY, payload)
-            .then(response => {
-              this.update();
-            })
-            .catch(reason => {
-              this.$notify({
-                title: "添加新分类失败",
-                message: `${reason.response.status} ${reason.response.data}`,
-                type: "error"
-              });
-            });
-        })
-        .catch(() => {
-          this.$message("创建取消");
-        });
-    },
-    editCategory(category: Category) {
-      let payload: mutations.PayloadEditCategory = {
-        id: category.id,
-        data: {
-          name: category.name,
-          parent_id: category.parent_id
-        }
-      };
-      this.$store
-        .dispatch(mutations.EDIT_CATEGORY, payload)
-        .then(response =>
-          this.$message({ message: "编辑分类成功", type: "success" })
-        )
-        .catch(reason =>
-          this.$notify({
-            title: "编辑分类失败",
-            message: `${reason.response.status} ${reason.response.data}`,
-            type: "error"
-          })
-        );
-    },
-    deleteCategory(category: Category) {
-      let payload: mutations.PayloadCategoryID = { id: category.id };
-      this.$store
-        .dispatch(mutations.DELETE_CATEGORY, payload)
-        .then(response => {
-          this.$router.push("/");
-          this.$message({ message: "删除分类成功", type: "success" });
-        })
-        .catch(reason =>
-          this.$notify({
-            title: "删除分类失败",
-            message: `${reason.response.status} ${reason.response.data}`,
-            type: "error"
-          })
-        );
-    },
     matchCurrent() {
       let id = this.$route.params.id;
       let category = CategoryUtil.getCategory(Number(id));
@@ -199,10 +117,6 @@ export default Vue.extend({
     filterNode(value: string, data: TreeModel) {
       if (!value) return true;
       return new RegExp(value, "i").test(data.category.name);
-    },
-    // Actions
-    update() {
-      this.$store.dispatch(mutations.UPDATE_CATEGORIES);
     }
   },
   watch: {
@@ -224,26 +138,13 @@ export default Vue.extend({
 </script>
 <style lang="scss" scoped>
 .category-tree {
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
-  .el-button-group {
+  .custom-tree-node {
+    flex: 1;
     display: flex;
-    align-items: stretch;
-    // justify-content: flex-end;
-    flex-wrap: wrap;
-    .el-button {
-      flex: 1 1 auto;
-    }
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
   }
-}
-
-.custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
 }
 </style>

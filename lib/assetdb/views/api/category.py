@@ -57,7 +57,7 @@ class CategoryFromId(Resource):
             database.Category: The category.
         """
 
-        return session.query(Category).get(id_)
+        return session.query(database.Category).get(id_)
 
     @classmethod
     def get(cls, id_):
@@ -71,12 +71,14 @@ class CategoryFromId(Resource):
         """Change category info.  """
 
         parser = reqparse.RequestParser()
-        parser.add_argument('name', required=True)
+        parser.add_argument('name')
+        parser.add_argument('parent_id')
         args = parser.parse_args()
 
         with database_session() as sess:
             item = cls.get_category(id_, sess)
-            item.name = args.name
+            item.name = args.name or item.name
+            item.parent_id = args.parent_id or item.parent_id
 
         return 'ok'
 
