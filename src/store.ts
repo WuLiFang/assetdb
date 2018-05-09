@@ -42,7 +42,7 @@ const store = new Vuex.Store(
             [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetFiles) {
                 payload.files.forEach(value => state.files[value.id] = value)
             },
-            [mutations.UPDATE_ASSET_FILES](state, payload: mutations.PayloadUpdateAssetRelatedFiles) {
+            [mutations.UPDATE_ASSET_RELATED_FILES](state, payload: mutations.PayloadUpdateAssetRelatedFiles) {
                 let asset = state.assets[payload.id]
                 if (!asset) {
                     console.warn(`Asset not found, id: ${payload.id}`)
@@ -127,7 +127,17 @@ const store = new Vuex.Store(
                         let files_payload: mutations.PayloadUpdateAssetFiles = { files }
                         context.commit(mutations.UPDATE_ASSET_FILES, files_payload)
                         let asset_payload: mutations.PayloadUpdateAssetRelatedFiles = { id: payload.id, files }
-                        context.commit(mutations.UPDATE_ASSET_FILES, asset_payload)
+                        context.commit(mutations.UPDATE_ASSET_RELATED_FILES, asset_payload)
+                    }
+                )
+            },
+            async [mutations.UPDATE_ASSET_FILES](context) {
+                return axios.get('/api/file').then(
+                    response => {
+                        let data = <Array<ResponseAssetFileData>>response.data
+                        let files = data.map(value => AssetFile.from_data(value))
+                        let payload: mutations.PayloadUpdateAssetFiles = { files }
+                        context.commit(mutations.UPDATE_ASSET_FILES, payload)
                     }
                 )
             },
@@ -141,6 +151,7 @@ const store = new Vuex.Store(
                     }
                 )
             }
+
         }
     }
 )

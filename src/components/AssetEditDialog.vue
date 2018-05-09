@@ -2,8 +2,9 @@
   el-dialog(
     :visible='visible'
     v-on='$listeners'
+    fullscreen
   )
-    AssetFileTransfer(:asset='asset')
+    AssetFileTransfer(:asset='asset' :selected.sync='selectedFiles')
     span(slot='footer')
       el-button(@click='reject') 取消
       el-button(@click='accept' type='primary') 确定
@@ -17,11 +18,17 @@ import AssetFileTransfer from "./AssetFileTransfer.vue";
 
 export default Vue.extend({
   props: { asset: { type: Asset }, visible: { default: false } },
+  data() {
+    return {
+      selectedFiles: []
+    };
+  },
   methods: {
     close() {
       this.$emit("update:visible", false);
     },
     accept() {
+      console.log(this.selectedFiles);
       this.close();
     },
     reject() {
@@ -33,3 +40,10 @@ export default Vue.extend({
   }
 });
 </script>
+<style lang="scss" scoped>
+.asset-file-transfer {
+  display: flex;
+  justify-content: center;
+
+}
+</style>

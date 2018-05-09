@@ -11,6 +11,19 @@ from .core import database_session
 LOGGER = logging.getLogger(__name__)
 
 
+class FileManage(Resource):
+    """All files in database.  """
+
+    @staticmethod
+    def get():
+        """Get all file info.   """
+        with database_session() as sess:
+            return [i.serialize() for i in sess.query(database.File).all()]
+
+
+API.add_resource(FileManage, '/file')
+
+
 class File(Resource):
     """API for file.  """
 
@@ -20,14 +33,14 @@ class File(Resource):
 
     @classmethod
     def get(cls, id_):
-        """Get asset info from id.   """
+        """Get file info from id.   """
 
         with database_session() as sess:
             return cls._get_item(id_, sess).serialize()
 
     @classmethod
     def delete(cls, id_):
-        """Delete a asset.  """
+        """Delete a file.  """
 
         with database_session() as sess:
             item = cls._get_item(id_, sess)
