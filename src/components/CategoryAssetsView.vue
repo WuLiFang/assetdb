@@ -1,5 +1,5 @@
 <template lang="pug">
-    div.cards
+    div.category-assets-view
       div(v-if="assets.length === 0") 空的
       AssetCard(v-for='asset in assets', :key='asset.id', :asset="asset")
 </template>
@@ -84,7 +84,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.cards {
+.category-assets-view {
   column-width: 200px;
   column-gap: 10px;
 }

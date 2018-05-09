@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-container
+  .category-toolbar
     el-button-group(class="toolbar")
       el-button(icon="el-icon-refresh" @click='updateAssets') 刷新
       el-button(icon="el-icon-plus" @click='isShowDialog = true') 新资产
@@ -95,6 +95,6 @@ export default Vue.extend({
 .toolbar {
   display: flex;
   justify-content: flex-end;
-  flex: 1;
+  flex: 0 0 auto;
 }
 </style>

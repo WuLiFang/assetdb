@@ -1,8 +1,10 @@
 <template lang="pug">
-  div(v-if="asset")
-    AssetDetail(:asset="asset")
-    FileCard(v-for="file in asset.files" :file="file" :key='file.id')
-  div(v-else v-loading="isLoading") {{placeholder}}
+  div(v-loading="isLoading")
+    div(v-if="asset")
+      AssetDetail(:asset="asset")
+      div.cards
+        FileCard(v-for="file in asset.files" :file="file" :key='file.id')
+    div(v-else) {{placeholderText}}
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -23,7 +25,7 @@ export default Vue.extend({
     return {
       asset: <Asset | null>null,
       isLoading: false,
-      placeholder: ""
+      placeholderText: ""
     };
   },
   computed: {
@@ -51,7 +53,7 @@ export default Vue.extend({
           });
           let asset: Asset | undefined = AssetUtil.storage[this.id];
           if (!asset) {
-            this.placeholder = "无此资产";
+            this.placeholderText = "无此资产";
           } else {
             this.asset = asset;
           }
@@ -63,7 +65,7 @@ export default Vue.extend({
             message: `${reason.name} ${reason.message}`,
             type: "error"
           });
-          this.placeholder = reason.message;
+          this.placeholderText = reason.message;
           this.isLoading = false;
         });
     }

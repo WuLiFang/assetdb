@@ -1,6 +1,6 @@
 <template lang="pug">
-  div
-    el-button-group(class="toolbar")
+  .category-tree
+    el-button-group.toolbar
       el-button(icon="el-icon-refresh" @click='update' size='mini') 刷新
       el-button(icon="el-icon-plus" @click='addSubCategory(currentCategory)' size='mini' :disabled="!currentCategory" type="primary") 新子分类
       el-button(icon="el-icon-edit" @click='isShowDialog = true' size='mini' :disabled="!currentCategory" type="primary") 编辑
@@ -223,9 +223,19 @@ export default Vue.extend({
 });
 </script>
 <style lang="scss" scoped>
-.toolbar {
+.category-tree {
   display: flex;
-  justify-content: flex-end;
+  flex-flow: column;
+  align-items: stretch;
+  .el-button-group {
+    display: flex;
+    align-items: stretch;
+    // justify-content: flex-end;
+    flex-wrap: wrap;
+    .el-button {
+      flex: 1 1 auto;
+    }
+  }
 }
 
 .custom-tree-node {

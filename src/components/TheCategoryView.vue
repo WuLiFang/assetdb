@@ -1,9 +1,7 @@
 <template lang="pug">
-  el-container(v-if="category")
-    el-aside(class="hidden-xs-only")
-      CategoryTree
-    el-container
-      el-header(height='')
+  .root(v-if="category")
+    CategoryTree.left.hidden-xs-only2
+    .right
         CategoryBreadcrumb(:category="category")
         el-row
           el-col(:span="12")
@@ -11,7 +9,6 @@
           el-col(:span="12")
             div 路径: {{category.path}}
         CategoryToolbar(:category="category" class='toolbar')
-      el-main
         CategoryAssetsView(:category="category")
 </template>
 
@@ -60,10 +57,32 @@ export default Vue.extend({
   }
 });
 </script>
-
 <style lang="scss" scoped>
-.el-breadcrumb {
-  padding: 20px;
-  font-size: 1em;
+@import "./variables.scss";
+
+.root {
+  display: flex;
+  overflow: auto;
+  flex-flow: column;
+  @media (min-width: $fullscreen-layout-min-width) {
+    flex-flow: row;
+  }
+  .left {
+    flex: 0 0 30em;
+    @media (min-width: $fullscreen-layout-min-width) {
+      flex: 1 0 auto;
+    }
+  }
+  .right {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column;
+    .category-assets-view {
+      @media (min-width: $fullscreen-layout-min-width) {
+        flex: 0 1 auto;
+        overflow: auto;
+      }
+    }
+  }
 }
 </style>

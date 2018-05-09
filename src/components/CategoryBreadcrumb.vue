@@ -33,3 +33,9 @@ export default Vue.extend({
 });
 </script>
 
+<style lang="scss" scoped>
+.el-breadcrumb {
+  padding: 20px;
+  font-size: 1em;
+}
+</style>

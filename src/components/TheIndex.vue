@@ -1,10 +1,9 @@
 <template lang="pug">
-el-container
-  el-header(height="")
+.app
+  header(height="")
     router-link(to="/")
       img(class="logo")
-  el-main
-    router-view
+  router-view.router-view
 </template>
 
 <script lang="ts">
@@ -14,18 +13,9 @@ export default Vue.extend({});
 </script>
 
 <style lang="scss" scoped>
-$header-height: 40px;
-.el-header {
-  background: #409eff;
-  height: $header-height;
-}
-.el-main {
-  position: absolute;
-  top: $header-height;
-  width: 100vw;
-  height: 100%;
-}
-.el-container {
+@import "./variables.scss";
+
+.app {
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -34,11 +24,25 @@ $header-height: 40px;
   position: absolute;
   top: 0;
   overflow: hidden;
-}
-.logo {
-  width: $header-height;
-  height: $header-height;
-  content: url("../logo.png");
+
+  header {
+    background: #409eff;
+    height: $header-height;
+    .logo {
+      width: $header-height;
+      height: $header-height;
+      content: url("../logo.png");
+    }
+  }
+  .router-view {
+    top: $header-height;
+    height: 100%;
+    @media (min-width: $fullscreen-layout-min-width) {
+      position: absolute;
+      bottom: 0;
+      width: 100vw;
+    }
+  }
 }
 </style>
 
