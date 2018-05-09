@@ -1,4 +1,5 @@
 const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     mode: 'development',
@@ -42,8 +43,14 @@ module.exports = {
                         publicPath: '/static/',
                     },
                 }],
+            }, {
+                test: /\.pug?$/,
+                loader: 'pug-plain-loader',
+            }, {
+                test: /\.scss?$/,
+                loader: ['style-loader', 'css-loader',
+                    'postcss-loader', 'sass-loader'],
             },
-
         ],
     },
     resolve: {
@@ -52,6 +59,7 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js',
         },
     },
+    plugins: [new VueLoaderPlugin()],
     devServer: {
         contentBase: path.join(__dirname, 'lib/assetdb/templates'),
         proxy: {
