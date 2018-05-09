@@ -1,10 +1,13 @@
 <template lang="pug">
-  div(v-loading="isLoading")
-    div(v-if="asset")
+  .the-asset-view(v-loading="isLoading" v-if="asset")
       AssetDetail(:asset="asset")
-      div.cards
-        FileCard(v-for="file in asset.files" :file="file" :key='file.id')
-    div(v-else) {{placeholderText}}
+      el-tabs(tabPosition='right')
+        el-tab-pane(label='查看')
+          div.cards
+            FileCard(v-for="file in asset.files" :file="file" :key='file.id')
+        el-tab-pane(label='管理')
+          div WIP(the-asset-view)
+  div(v-else) {{placeholderText}}
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -79,3 +82,14 @@ export default Vue.extend({
   }
 });
 </script>
+<style lang="scss" scoped>
+@import "./variables.scss";
+
+.the-asset-view {
+  display: flex;
+  flex-flow: column;
+  .cards {
+    display: flex;
+  }
+}
+</style>

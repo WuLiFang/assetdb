@@ -1,9 +1,8 @@
 <template lang="pug">
-  el-container
-    el-header
-      CategoryBreadcrumb(:category="parentCategory") 
-        el-breadcrumb-item 
-          span {{asset.name}}
+  .asset-detail
+    CategoryBreadcrumb(:category="parentCategory") 
+      el-breadcrumb-item 
+        span {{asset.name}}
     div {{asset.description}}
 </template>
 

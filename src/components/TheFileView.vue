@@ -1,6 +1,9 @@
 <template lang="pug">
-  div(v-if="file")
+  .the-file-view(v-if="file")
     FileCard(:file="file" :key='file.id')
+    .bottom 
+      p 标签: {{file.label}}
+      p 路径: {{file.path}}
   div(v-else v-loading="isLoading") {{placeholder}}
 </template>
 <script lang="ts">
@@ -76,3 +79,22 @@ export default Vue.extend({
   }
 });
 </script>
+<style lang="scss" scoped>
+@import "./variables.scss";
+
+.the-file-view {
+  display: flex;
+  position: absolute;
+  top: $header-height;
+  bottom: 0;
+  flex-flow: column;
+
+  overflow: auto;
+  .file-card {
+    flex: 0 1 auto;
+  }
+  .bottom {
+    flex: 1 0 10em;
+  }
+}
+</style>

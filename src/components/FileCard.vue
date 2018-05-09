@@ -1,5 +1,5 @@
 <template lang="pug">
-  router-link(:to="routeURL")
+  router-link.file-card(:to="routeURL")
     el-card
       .display(draggable @dragstart.stop="onDragStart($event)")
         video(v-if='srcURL' :src='srcURL' :poster='posterURL')
@@ -48,17 +48,24 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.el-card {
-  break-inside: avoid;
-  word-wrap: break-word;
-  margin-bottom: 10px;
-  img {
-    width: 100%;
+.file-card {
+  div {
+    display: inline-block;
   }
-  &:hover {
-    .toolbar {
-      visibility: visible;
-      opacity: 1;
+  margin: auto;
+  margin-top: 3px;
+  .el-card {
+    break-inside: avoid;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+    max-height: 100%;
+    // width: 100%;
+    text-align: center;
+    &:hover {
+      .toolbar {
+        visibility: visible;
+        opacity: 1;
+      }
     }
   }
 }

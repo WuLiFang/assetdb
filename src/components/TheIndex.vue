@@ -37,10 +37,11 @@ export default Vue.extend({});
   .router-view {
     top: $header-height;
     height: 100%;
+    width: 100vw;
     @media (min-width: $fullscreen-layout-min-width) {
       position: absolute;
+      height: initial;
       bottom: 0;
-      width: 100vw;
     }
   }
 }
