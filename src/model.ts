@@ -1,6 +1,9 @@
 // TODO: Refactor `CategoryStorage`
 import { ResponseAssetData, ResponseCategoryData, ResponseAssetFileData } from './interfaces';
-export class CategoryStorage extends Array<Category>{ }
+
+export interface CategoryStorage {
+    [id: string]: Category
+}
 
 export class Category {
     public count: number | null = null;

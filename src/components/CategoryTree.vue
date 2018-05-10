@@ -22,15 +22,17 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapActions } from "vuex";
-
-import * as _ from "lodash";
 import { TreeNode, ElTree } from "element-ui/types/tree";
 import { Tree } from "element-ui";
 
 import { CategoryStorage, Category } from "../model";
-import CategoryUtil from "../category-util";
 import * as mutations from "../mutation-types";
+import {
+  CategoryChildrenMap,
+  CategoryRouteURLMap,
+  CategoryRecurseCountMap
+} from "../store/types";
+import { categoryGetterMinxin } from "../store/category";
 
 interface TreeModel {
   id: string;
@@ -40,6 +42,7 @@ interface TreeModel {
   disabled?: boolean;
   isLeaf?: boolean;
 }
+
 export default Vue.extend({
   data() {
     return {
@@ -48,61 +51,47 @@ export default Vue.extend({
         label: "label",
         children: "children"
       },
-      currentCategory: <Category | null>null,
-      isShowDialog: false,
-      CategoryUtil
+      currentCategory: <Category | null>null
     };
   },
   computed: {
     model(): TreeModel[] | null {
-      let top = _.find(this.categories, value => !value.parent_id);
-      if (!top) {
+      if (!this.rootCategory) {
         return null;
       }
       let getModel = (category: Category): TreeModel => {
-        let children = _.filter(
-          this.categories,
-          value => value.parent_id == category.id
-        );
+        let children = this.childrenMap[category.id];
         return {
           id: String(category.id),
           label: category.name,
           category: category,
-          children: _.map(children, value => getModel(value))
+          children: children.map(value => getModel(value))
         };
       };
-      return [getModel(top)];
+      return [getModel(this.rootCategory)];
     },
-    categories(): CategoryStorage {
-      return this.$store.state.categories;
-    },
-    allowDelete(): boolean {
-      let category = this.currentCategory;
-      if (!category) {
-        return false;
-      }
-      return (
-        CategoryUtil.getChildren(category).length === 0 &&
-        CategoryUtil.getRecurseCount(category) === 0
-      );
-    }
+    ...categoryGetterMinxin
   },
   methods: {
     onCurrentChange(data: TreeModel, node: any) {
       this.currentCategory = data.category;
-      this.$router.push(CategoryUtil.url(data.category));
+      this.$router.push(this.routeURLMap[data.category.id]);
     },
     matchCurrent() {
       let id = this.$route.params.id;
-      let category = CategoryUtil.getCategory(Number(id));
+      let category = this.storage[Number(id)];
       if (!category) {
         return;
       }
-      CategoryUtil.getChildren(category).forEach(value => {
+
+      this.childrenMap[category.id].forEach(value => {
         let payload: mutations.PayloadCategoryID = { id: value.id };
         this.$store.dispatch(mutations.COUNT_CATEGORY, payload);
       });
-      CategoryUtil.getRelated(category).forEach(value => this.expand(value.id));
+      let logicalPath: Array<
+        Category
+      > = this.$store.getters.getLogicalCategoryPath(category);
+      logicalPath.forEach(value => this.expand(value.id));
     },
     expand(id: number) {
       let tree = <ElTree>this.$refs.tree;
@@ -127,15 +116,10 @@ export default Vue.extend({
     $route() {
       this.matchCurrent();
     }
-  },
-  mounted() {
-    this.matchCurrent();
-  },
-  updated() {
-    this.matchCurrent();
   }
 });
 </script>
+
 <style lang="scss" scoped>
 .category-tree {
   .custom-tree-node {

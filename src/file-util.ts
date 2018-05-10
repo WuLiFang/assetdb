@@ -1,10 +1,10 @@
 import { Asset, AssetStorage, AssetFile, AssetFileStorage } from "./model";
-import store from "./store";
+import { state } from "./store/asset-file";
 import * as _ from "lodash";
 
 export default class FileUtil {
     static get storage(): AssetFileStorage {
-        return store.state.files
+        return state
     }
     static routeURL(file: AssetFile): string {
         return `/file/${file.id}/${file.label}`

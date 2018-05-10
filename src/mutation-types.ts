@@ -11,6 +11,10 @@ export const DELETE_CATEGORY = 'delete_category'
 export interface PayloadCategoryID {
     id: number
 }
+
+export interface PayloadUpdateCategories {
+    categories: Array<Category>
+}
 export interface PayloadEditCategory extends PayloadCategoryID {
     data: { name: string, parent_id: number }
 }
@@ -38,10 +42,19 @@ export interface PayloadUpdateAssets {
 export interface PayloadUpdateAssetRelatedFiles extends PayloadAssetID {
     files: Array<AssetFile>
 }
+export interface PayloadEditAsset extends PayloadAssetID {
+    data: {
+        category_id?: number
+        name?: string
+        files?: Array<number>
+        description?: string
+    }
+}
 
 // Asset file mutations
 export const UPDATE_ASSET_FILES = 'update_asset_files'
 export const UPDATE_ASSET_FILE = 'update_asset_file'
+export const EDIT_ASSET_FILE = 'edit_asset_file'
 
 export interface PayloadAssetFileID {
     id: number

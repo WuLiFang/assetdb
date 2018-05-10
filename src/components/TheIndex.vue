@@ -8,8 +8,14 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { UPDATE_CATEGORIES, UPDATE_ROOT } from "../mutation-types";
 
-export default Vue.extend({});
+export default Vue.extend({
+  created() {
+    this.$store.dispatch(UPDATE_ROOT);
+    this.$store.dispatch(UPDATE_CATEGORIES);
+  }
+});
 </script>
 
 <style lang="scss" scoped>

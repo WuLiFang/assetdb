@@ -19,30 +19,17 @@ import CategoryTree from "./CategoryTree.vue";
 import CategoryToolbar from "./CategoryToolbar.vue";
 
 import { Category, CategoryStorage } from "../model";
+import { categoryGetterMinxin } from "../store/category";
 
 export default Vue.extend({
   computed: {
-    categories(): CategoryStorage {
-      return this.$store.state.categories;
-    },
+    ...categoryGetterMinxin,
     id(): number {
       return Number(this.$route.params.id);
     },
     category(): Category | undefined {
-      return _.find(this.categories, value => value.id == this.id);
+      return this.storage[this.id];
     }
-  },
-  methods: {
-    updateCategory: _.debounce(function(this: Vue, category: Category) {
-      axios
-        .put(`/api/category/${category.id}`, category)
-        .then(() => {
-          this.$message({ message: "更新分类信息成功", type: "success" });
-        })
-        .catch(() => {
-          this.$message({ message: "更新分类信息失败", type: "error" });
-        });
-    }, 2000)
   },
   components: {
     CategoryAssetsView,

@@ -1,5 +1,7 @@
 import Vue from "vue";
+import Vuex from 'vuex';
 import VueRouter from 'vue-router';
+
 
 import ElementUI from 'element-ui';
 // import "element-ui/lib/theme-chalk/display.css";
@@ -12,11 +14,14 @@ import TheIndex from "./components/TheIndex.vue";
 import TheIndexView from "./components/TheIndexView.vue";
 
 import * as mutations from "./mutation-types";
-import store from './store';
+import _store from './store';
 
 
+Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(ElementUI);
+
+const store = new Vuex.Store(_store)
 
 const routes = [
     { path: '/', component: TheIndexView },
@@ -34,6 +39,5 @@ const vue = new Vue({
         TheIndex
     }
 })
-store.dispatch(mutations.UPDATE_ROOT)
-store.dispatch(mutations.UPDATE_CATEGORIES)
+
 vue.$mount('#app')

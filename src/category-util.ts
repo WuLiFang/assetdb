@@ -1,10 +1,11 @@
 import { Category, CategoryStorage } from "./model";
-import store from "./store";
+import { state } from "./store/category";
 import * as _ from "lodash";
+import { CategoryState } from "./store/types";
 
 export default class CategoryUtil {
-    static get categories(): CategoryStorage {
-        return store.state.categories
+    static get storage() {
+        return state.storage
     }
     static url(category: Category): string {
         return `/category/${category.id}/${category.name}`
@@ -38,10 +39,10 @@ export default class CategoryUtil {
         return ret;
     }
     static getCategory(id: number): Category | undefined {
-        return _.find(this.categories, value => value.id == id);
+        return _.find(this.storage, value => value.id == id);
     }
     static getChildren(category: Category): Category[] {
-        return _.filter(this.categories, value => value.parent_id == category.id)
+        return _.filter(this.storage, value => value.parent_id == category.id)
     }
     static getRecurseCount(category: Category): number {
         let count = category.count ? category.count : 0

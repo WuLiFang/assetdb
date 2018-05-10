@@ -1,5 +1,6 @@
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const webpack = require('webpack');
 
 module.exports = {
     mode: 'development',
@@ -59,7 +60,13 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js',
         },
     },
-    plugins: [new VueLoaderPlugin()],
+    plugins: [
+        new VueLoaderPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV':
+                JSON.stringify(process.env.NODE_ENV || 'development'),
+        }),
+    ],
     devServer: {
         contentBase: path.join(__dirname, 'lib/assetdb/templates'),
         proxy: {
