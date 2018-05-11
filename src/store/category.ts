@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { Module, MutationTree, ActionTree, GetterTree, mapGetters, mapState } from 'vuex';
 import { DefaultComputed } from "vue/types/options";
 
@@ -111,20 +112,10 @@ export const categoryComputedMinxin = <CategoryComputedMixin>{
 
 const mutations: MutationTree<typeof state> = {
     [MutationTypes.UPDATE_CATEGORIES](state, payload: MutationTypes.PayloadUpdateCategories) {
-        if (_.difference(payload.categories.map(i => i.id), Object.keys(state.storage))) {
-            let storage: CategoryStorage = {}
-            let countMap: CountMap = {}
-            payload.categories.forEach(value => {
-                storage[value.id] = value
-                countMap[value.id] = null
-            })
-            state.storage = storage
-            state.countMap = countMap
-        }
-        payload.categories.forEach(i => state.storage[i.id] = i)
+        payload.categories.forEach(i => Vue.set(state.storage, i.id, i))
     },
     [MutationTypes.COUNT_CATEGORY](state, payload: MutationTypes.PayloadSetCategoryCount) {
-        state.countMap[payload.id] = payload.count
+        Vue.set(state.countMap, payload.id, payload.count)
     },
 }
 

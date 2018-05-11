@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { Module, MutationTree, ActionTree, GetterTree, mapState, mapGetters } from 'vuex';
 import { DefaultComputed } from "vue/types/options";
 
@@ -37,8 +38,7 @@ export const assetFileComputedMinxin = <AssetFileComputedMixin>{
 
 const mutations: MutationTree<AssetFileState> = {
     [MutationTypes.UPDATE_ASSET_FILES](state, payload: MutationTypes.PayloadUpdateAssetFiles) {
-        payload.files.forEach(value => state.storage[value.id] = value)
-        state.storage = { ...state.storage }
+        payload.files.forEach(value => Vue.set(state.storage, value.id, value))
     },
 }
 

@@ -11,17 +11,18 @@
 
 <script lang="ts">
 import Vue from "vue";
+
 import { Asset, AssetFile } from "../model";
 import { categoryComputedMinxin } from "../store/category";
+import { assetComputedMinxin } from "../store/asset";
 import { ResponseAssetFileData } from "../interfaces";
 import {
-  UPDATE_ASSET_FILE,
   UPDATE_ASSET_FILES,
   PayloadUpdateAssetFiles,
   UPDATE_ASSET_RELATED_FILES,
   PayloadUpdateAssetRelatedFiles
 } from "../mutation-types";
-import { assetComputedMinxin } from "../store/asset";
+
 export default Vue.extend({
   props: {
     asset: { type: Asset }
