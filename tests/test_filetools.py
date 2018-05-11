@@ -1,16 +1,16 @@
-"""Test module `assetdb.util`.  """
+"""Test module `assetdb.filetools`.  """
 
 from pathlib import PurePath
 from unittest import TestCase, main
 
-from assetdb import util
+from assetdb import filetools
 
 
 class UtilTestCase(TestCase):
     def test_get_path(self):
-        result = util.path('test')
+        result = filetools.path('test')
         self.assertIsInstance(result, PurePath)
-        result = util.path('test', 'path')
+        result = filetools.path('test', 'path')
         self.assertIsInstance(result, PurePath)
 
 
