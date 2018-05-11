@@ -24,6 +24,11 @@ import AssetFileTransfer from "./AssetFileTransfer.vue";
 import { Asset, AssetFile } from "../model";
 import * as mutations from "../mutation-types";
 import { assetComputedMinxin } from "../store/asset";
+import {
+  PayloadUpdateAssetRelatedFiles,
+  UPDATE_ASSET_RELATED_FILES
+} from "../mutation-types";
+import { assetFileComputedMinxin } from "../store/asset-file";
 
 export default Vue.extend({
   props: { asset: { type: Asset }, visible: { default: false } },
@@ -34,8 +39,18 @@ export default Vue.extend({
   },
   computed: {
     ...assetComputedMinxin,
-    selectedFiles(): Array<string> {
-      return this.getFiles(this.asset).map(value => value.id);
+    ...assetFileComputedMinxin,
+    selectedFiles: {
+      get(): Array<string> {
+        return this.getFiles(this.asset).map(value => value.id);
+      },
+      set(value: Array<string>) {
+        let payload: PayloadUpdateAssetRelatedFiles = {
+          id: this.asset.id,
+          files: value.map(i => this.assetFileStore.storage[i])
+        };
+        this.$store.commit(UPDATE_ASSET_RELATED_FILES, payload);
+      }
     }
   },
   methods: {
