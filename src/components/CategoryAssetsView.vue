@@ -20,7 +20,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      assets: new Array<Asset>(),
+      // assets: new Array<Asset>(),
       isLoading: true,
       isShowDialog: false,
       assetForm: {
@@ -31,7 +31,13 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...assetComputedMinxin
+    ...assetComputedMinxin,
+    assets(): Array<Asset> {
+      return _.filter(
+        this.assetStore.storage,
+        i => i.category_id == this.category.id
+      );
+    }
   },
   watch: {
     category: function(newValue, oldValue) {
@@ -45,10 +51,6 @@ export default Vue.extend({
       this.$store
         .dispatch(mutations.UPDATE_ASSETS, payload)
         .then(response => {
-          this.assets = _.filter(
-            this.assetStore.storage,
-            value => value.category_id == this.category.id
-          );
           this.isLoading = false;
         })
         .catch(reason => {

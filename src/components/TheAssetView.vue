@@ -4,7 +4,7 @@
       el-tabs(tabPosition='right')
         el-tab-pane(label='查看')
           div.cards
-            FileCard(v-for="file in asset.files" :file="file" :key='file.id')
+            FileCard(v-for="file in getFiles(asset)" :file="file" :key='file.id')
         el-tab-pane(label='管理')
           AssetManagePane(:asset='asset')
   div(v-else) {{placeholderText}}

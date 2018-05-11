@@ -9,12 +9,14 @@
 import Vue from "vue";
 
 import { Asset } from "../model";
+import { assetComputedMinxin } from "../store/asset";
 
 export default Vue.extend({
   props: { asset: { type: Asset } },
   computed: {
+    ...assetComputedMinxin,
     tableData(): tableRowData[] {
-      return this.asset.files.map(value => ({
+      return this.getFiles(this.asset).map(value => ({
         label: value.label,
         // size: 0,
         mimetype: value.mimetype,

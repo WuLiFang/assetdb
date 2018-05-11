@@ -5,9 +5,9 @@ import * as _ from "lodash";
 import axios from "axios";
 
 import { ResponseAssetData, } from '../interfaces';
-import { Asset, AssetStorage } from "../model";
+import { Asset, AssetStorage, AssetFile } from "../model";
 import * as MutationTypes from "../mutation-types";
-import { RootState, AssetState, AssetMetaData, RouteURLMap } from './types'
+import { RootState, AssetState, AssetMetaData, RouteURLMap, CombinedRootState } from './types'
 
 export const state: AssetState = {
     storage: {},
@@ -20,19 +20,24 @@ const getters: GetterTree<AssetState, RootState> = {
         return {
             routeURLMap
         }
-
-    }
+    },
+    getFiles: (state, getters: GetterTree<AssetState, RootState>, rootState: RootState) =>
+        (asset: Asset): Array<AssetFile> => {
+            return asset.fileIDArray.map(i => (<CombinedRootState>rootState).assetFileStore.storage[i])
+        }
 }
 interface AssetComputedMixin extends DefaultComputed {
     assetStore: () => AssetState
     assetMetaData: () => AssetMetaData
+    getFiles: () => (asset: Asset) => Array<AssetFile>
 }
 
 export const assetComputedMinxin = <AssetComputedMixin>{
     ...mapState(
         ['assetStore']),
     ...mapGetters(
-        ['assetMetaData'])
+        ['assetMetaData',
+            'getFiles'])
 }
 
 const mutations: MutationTree<typeof state> = {
@@ -46,7 +51,7 @@ const mutations: MutationTree<typeof state> = {
             console.warn(`Asset not found, id: ${payload.id}`)
             return
         }
-        asset.files = payload.files
+        asset.fileIDArray = payload.files.map(i => i.id)
     }
 }
 

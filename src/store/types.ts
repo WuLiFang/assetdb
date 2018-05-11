@@ -4,22 +4,33 @@ export interface IDMap<T> {
     [id: string]: T
 }
 
-export interface RouteURLMap extends IDMap<string> {
-}
+export type RouteURLMap = IDMap<string>
+export type CountMap = IDMap<number | null>
+export type CategoryArrayMap = IDMap<Array<Category>>
 
-export interface CountMap extends IDMap<number | null> {
 
-}
 export interface RootState {
     root: string
-}
-export interface CategoryArrayMap extends IDMap<Array<Category>> {
 }
 
 export interface CategoryState {
     storage: CategoryStorage
     countMap: CountMap
 }
+
+export interface AssetState {
+    storage: AssetStorage
+}
+export interface AssetFileState {
+    storage: AssetFileStorage
+}
+
+export interface CombinedRootState extends RootState {
+    categoryStore: CategoryState
+    assetStore: AssetState
+    assetFileStore: AssetFileState
+}
+
 
 export interface CategoryMetaData {
     childrenMap: CategoryArrayMap
@@ -28,17 +39,10 @@ export interface CategoryMetaData {
     root: Category | undefined
 }
 
-export interface AssetState {
-    storage: AssetStorage
-}
-
 export interface AssetMetaData {
     routeURLMap: RouteURLMap
 }
 
-export interface AssetFileState {
-    storage: AssetFileStorage
-}
 
 export interface AssetFileMetaData {
     routeURLMap: RouteURLMap
