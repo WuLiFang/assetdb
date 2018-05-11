@@ -21,9 +21,7 @@ import { assetComputedMinxin } from "../store/asset";
 export default Vue.extend({
   props: { asset: { type: Asset }, visible: { default: false } },
   data() {
-    return {
-      selectedFiles: <Array<string>>[]
-    };
+    return {};
   },
   computed: {
     ...assetComputedMinxin,
