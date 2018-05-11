@@ -1,14 +1,10 @@
 """Assetdb RESTful API about asset.  """
 
 import logging
-import os
-from pathlib import PurePath
 
-from flask import redirect, request, url_for
 from flask_restful import Resource, reqparse
-from werkzeug.utils import secure_filename
 
-from ... import database, filetools
+from ... import database
 from ..app import API
 from .core import database_session
 
@@ -37,7 +33,7 @@ class Asset(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('category_id', type=int)
         parser.add_argument('name')
-        parser.add_argument('files', type=list)
+        parser.add_argument('files', action='append')
         parser.add_argument('description')
         args = parser.parse_args()
 
@@ -69,8 +65,12 @@ API.add_resource(Asset, '/asset/<id_>')
 
 
 class AssetFiles(Resource):
+    """Get asset related files.  """
+
     @staticmethod
     def get(id_):
+        """Get files.  """
+
         with database_session() as sess:
             item = _get_item(id_, sess)
             return [i.serialize() for i in item.files]
