@@ -63,10 +63,13 @@ export default Vue.extend({
     },
     deleteCategory() {
       let payload: mutations.PayloadCategoryID = { id: this.category.id };
+      let parent_id = this.category.parent_id;
       this.$store
         .dispatch(mutations.DELETE_CATEGORY, payload)
         .then(response => {
-          this.$router.push("/");
+          if (parent_id) {
+            this.$router.push(this.categoryMetaData.routeURLMap[parent_id]);
+          }
           this.$message({ message: "删除分类成功", type: "success" });
         })
         .catch(reason =>

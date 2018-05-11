@@ -53,11 +53,6 @@ export default Vue.extend({
           this.$store.dispatch(mutations.UPDATE_ASSET_RELATED_FILES, payload);
         })
         .then(response => {
-          this.$notify({
-            title: "读取资产信息",
-            message: "成功",
-            type: "success"
-          });
           let asset: Asset | undefined = this.assetStore.storage[this.id];
           if (!asset) {
             this.placeholderText = "无此资产";

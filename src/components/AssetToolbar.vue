@@ -2,7 +2,6 @@
   el-container
     el-button-group(class="toolbar")
       el-button(icon="el-icon-refresh" @click='updateFiles') 刷新
-      el-button(icon="el-icon-plus") 新文件
       el-button(icon="el-icon-edit" @click='isShowEditDialog = true' type="primary") 编辑
       el-button(icon="el-icon-delete" type="danger") 删除
     

@@ -117,6 +117,10 @@ const mutations: MutationTree<typeof state> = {
     [MutationTypes.COUNT_CATEGORY](state, payload: MutationTypes.PayloadSetCategoryCount) {
         Vue.set(state.countMap, payload.id, payload.count)
     },
+    [MutationTypes.DELETE_CATEGORY](state, payload: MutationTypes.PayloadCategoryID) {
+        Vue.delete(state.storage, payload.id)
+        Vue.delete(state.countMap, payload.id)
+    }
 }
 
 const actions: ActionTree<typeof state, RootState> = {
@@ -150,7 +154,7 @@ const actions: ActionTree<typeof state, RootState> = {
     },
     async [MutationTypes.DELETE_CATEGORY](context, payload: MutationTypes.PayloadCategoryID) {
         return axios.delete(`/api/category/${payload.id}`).then(
-            () => context.dispatch(MutationTypes.UPDATE_CATEGORIES)
+            () => context.commit(MutationTypes.DELETE_CATEGORY, payload)
         )
     },
 }
