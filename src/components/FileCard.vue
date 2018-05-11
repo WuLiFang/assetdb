@@ -15,14 +15,15 @@ import axios from "axios";
 import * as _ from "lodash";
 
 import { Asset, AssetFile } from "../model";
-import FileUtil from "../file-util";
+import { assetFileComputedMinxin } from "../store/asset-file";
 
 export default Vue.extend({
   props: { file: { type: AssetFile } },
   data() {
-    return { isDeleted: false, FileUtil };
+    return { isDeleted: false };
   },
   computed: {
+    ...assetFileComputedMinxin,
     url(): string {
       return `/storage/id/${this.file.id}`;
     },
@@ -36,7 +37,7 @@ export default Vue.extend({
       return `${this.$store.state.root}/${this.file.path}`;
     },
     routeURL(): string {
-      return FileUtil.routeURL(this.file);
+      return this.assetFileMetaData.routeURLMap[this.file.id];
     }
   },
   methods: {

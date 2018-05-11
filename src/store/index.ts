@@ -5,9 +5,9 @@ import axios from "axios";
 
 import * as mutations from "../mutation-types";
 
-import category from './category';
-import asset from './asset';
-import assetFile from './asset-file';
+import categoryStore from './category';
+import assetStore from './asset';
+import assetFileStore from './asset-file';
 import { RootState } from './types'
 
 
@@ -32,9 +32,9 @@ const store: StoreOptions<RootState> =
             },
         },
         modules: {
-            category,
-            asset,
-            assetFile
+            categoryStore,
+            assetStore,
+            assetFileStore
         },
     }
 

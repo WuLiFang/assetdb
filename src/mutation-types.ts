@@ -5,25 +5,24 @@ export const UPDATE_ROOT = 'update_root'
 export const ADD_CATEGORY = 'add_category'
 export const EDIT_CATEGORY = 'edit_category'
 export const COUNT_CATEGORY = 'count_category'
-export const SET_CATEGORY = 'set_category'
 export const DELETE_CATEGORY = 'delete_category'
 
 export interface PayloadCategoryID {
-    id: number
+    id: string
 }
 
 export interface PayloadUpdateCategories {
     categories: Array<Category>
 }
 export interface PayloadEditCategory extends PayloadCategoryID {
-    data: { name: string, parent_id: number }
+    data: { name: string, parent_id: string }
 }
 export interface PayloadAddCategory {
-    name: string, parent_id: number, path: string
+    name: string, parent_id: string, path: string
 }
 
-export interface PayloadSetCategory extends PayloadCategoryID {
-    count?: number | null
+export interface PayloadSetCategoryCount extends PayloadCategoryID {
+    count: number
 }
 
 // Asset mutations.
@@ -34,7 +33,7 @@ export const ADD_ASSET = 'add_asset'
 export const DELETE_ASSET = 'delete_asset'
 export const EDIT_ASSET = 'edit_asset'
 export interface PayloadAssetID {
-    id: number
+    id: string
 }
 export interface PayloadUpdateAssets {
     assets: Array<Asset>
@@ -44,7 +43,7 @@ export interface PayloadUpdateAssetRelatedFiles extends PayloadAssetID {
 }
 export interface PayloadEditAsset extends PayloadAssetID {
     data: {
-        category_id?: number
+        category_id?: string
         name?: string
         files?: Array<number>
         description?: string
@@ -57,7 +56,7 @@ export const UPDATE_ASSET_FILE = 'update_asset_file'
 export const EDIT_ASSET_FILE = 'edit_asset_file'
 
 export interface PayloadAssetFileID {
-    id: number
+    id: string
 }
 export interface PayloadUpdateAssetFiles {
     files: Array<AssetFile>

@@ -11,11 +11,11 @@
         el-col(:span="20")
           el-select(v-model='category.parent_id' filterable)
             el-option(
-              v-for="i in CategoryUtil.categories"
+              v-for="i in categoryStore.storage"
               :key="i.id"
               :label="i.name"
               :value="i.id"
-              :disabled='!CategoryUtil.isLegalParent(category, i)'
+              :disabled='!isValidCategoryRelationship(category, i)'
               )
       el-row
         el-col(:span="4")
@@ -31,7 +31,7 @@ import Vue from "vue";
 
 import { Category } from "../model";
 import * as mutations from "../mutation-types";
-import CategoryUtil from "../category-util";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   props: {
@@ -39,11 +39,10 @@ export default Vue.extend({
     visible: { default: false }
   },
   data() {
-    return {
-      CategoryUtil
-    };
+    return {};
   },
   computed: {
+    ...categoryComputedMinxin,
     dialogListeners(): Vue["$listeners"] {
       return this.$listeners;
     }
@@ -57,6 +56,9 @@ export default Vue.extend({
       this.$message("取消编辑");
     },
     accept() {
+      if (!this.category.parent_id) {
+        return;
+      }
       let payload: mutations.PayloadEditCategory = {
         id: this.category.id,
         data: {

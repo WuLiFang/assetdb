@@ -21,7 +21,7 @@ export default Vue.extend({
   props: { asset: { type: Asset }, visible: { default: false } },
   data() {
     return {
-      selectedFiles: <Array<number>>[]
+      selectedFiles: <Array<string>>[]
     };
   },
   methods: {

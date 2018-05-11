@@ -16,9 +16,8 @@ import AssetDetail from "./AssetDetail.vue";
 import FileCard from "./FileCard.vue";
 
 import { Asset, AssetStorage, AssetFile } from "../model";
-import FileUtil from "../file-util";
-import CategoryUtil from "../category-util";
 import * as mutations from "../mutation-types";
+import { assetFileComputedMinxin } from "../store/asset-file";
 
 export default Vue.extend({
   data() {
@@ -29,8 +28,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    id(): number {
-      return Number(this.$route.params.id);
+    ...assetFileComputedMinxin,
+    id(): string {
+      return this.$route.params.id;
     }
   },
   methods: {
@@ -51,7 +51,9 @@ export default Vue.extend({
             message: "成功",
             type: "success"
           });
-          let file: AssetFile | undefined = FileUtil.storage[this.id];
+          let file: AssetFile | undefined = this.assetFileStore.storage[
+            this.id
+          ];
           if (!file) {
             this.placeholder = "无此文件";
           } else {

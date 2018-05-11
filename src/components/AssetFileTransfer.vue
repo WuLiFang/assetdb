@@ -14,13 +14,13 @@ import * as _ from "lodash";
 import { ElTransfer } from "element-ui/types/transfer";
 
 import { Asset } from "../model";
-import FileUtil from "../file-util";
 import * as mutations from "../mutation-types";
+import { assetFileComputedMinxin } from "../store/asset-file";
 
 export default Vue.extend({
   props: {
     asset: { type: Asset },
-    selected: { type: <() => Array<number>>Array }
+    selected: { type: <() => Array<string>>Array }
   },
   data() {
     return {
@@ -28,11 +28,12 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...assetFileComputedMinxin,
     computedSelected: {
-      get: function(): Array<Number> {
+      get: function(): Array<string> {
         return this.selected;
       },
-      set: function(value: Array<Number>) {
+      set: function(value: Array<string>) {
         this.$emit("update:selected", value);
       }
     }
@@ -44,7 +45,7 @@ export default Vue.extend({
         .then(() => (this.data = this.getData()));
     },
     getData(): ElTransfer["data"] {
-      let storage = FileUtil.storage;
+      let storage = this.assetFileStore.storage;
       return _.map(storage, value => ({
         label: value.label,
         key: value.id,

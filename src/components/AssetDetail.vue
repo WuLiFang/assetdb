@@ -11,8 +11,8 @@ import Vue from "vue";
 
 import CategoryBreadcrumb from "./CategoryBreadcrumb.vue";
 
-import CategoryUtil from "../category-util";
 import { Asset, Category } from "../model";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   props: {
@@ -21,8 +21,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...categoryComputedMinxin,
     parentCategory(): Category | undefined {
-      return CategoryUtil.getCategory(this.asset.category_id);
+      return this.categoryStore.storage[this.asset.category_id];
     }
   },
   components: {

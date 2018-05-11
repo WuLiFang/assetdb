@@ -1,7 +1,7 @@
 
 export interface ResponseCategoryData {
     id: number,
-    parent_id: number,
+    parent_id: number | null,
     name: string,
     path: string
 }

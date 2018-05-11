@@ -20,9 +20,8 @@ import AssetManagePane from "./AssetManagePane.vue";
 import FileCard from "./FileCard.vue";
 
 import { Asset, AssetStorage } from "../model";
-import AssetUtil from "../asset-util";
-import CategoryUtil from "../category-util";
 import * as mutations from "../mutation-types";
+import { assetComputedMinxin } from "../store/asset";
 
 export default Vue.extend({
   data() {
@@ -33,8 +32,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    id(): number {
-      return Number(this.$route.params.id);
+    ...assetComputedMinxin,
+    id(): string {
+      return this.$route.params.id;
     }
   },
   methods: {
@@ -55,7 +55,7 @@ export default Vue.extend({
             message: "成功",
             type: "success"
           });
-          let asset: Asset | undefined = AssetUtil.storage[this.id];
+          let asset: Asset | undefined = this.assetStore.storage[this.id];
           if (!asset) {
             this.placeholderText = "无此资产";
           } else {

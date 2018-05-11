@@ -6,15 +6,18 @@ export interface CategoryStorage {
 }
 
 export class Category {
-    public count: number | null = null;
     constructor(
-        public id: number,
-        public parent_id: number,
+        public id: string,
+        public parent_id: string | null,
         public name: string,
         public path: string) {
     }
     static from_data(data: ResponseCategoryData) {
-        return new Category(data.id, data.parent_id, data.name, data.path)
+        return new Category(
+            String(data.id),
+            data.parent_id === null ? null : String(data.parent_id),
+            data.name,
+            data.path)
     }
 
 }
@@ -25,15 +28,15 @@ export interface AssetStorage {
 export class Asset {
     public files: Array<AssetFile> = []
     constructor(
-        public id: number,
-        public category_id: number,
+        public id: string,
+        public category_id: string,
         public name: string,
         public thumbnail_id: string | null,
         public description: string | null,
     ) {
     }
     static from_data(data: ResponseAssetData) {
-        return new Asset(data.id, data.category_id, data.name, data.thumbnail_id, data.description)
+        return new Asset(String(data.id), String(data.category_id), data.name, data.thumbnail_id, data.description)
     }
 }
 
@@ -42,12 +45,12 @@ export interface AssetFileStorage {
 }
 export class AssetFile {
     constructor(
-        public id: number,
+        public id: string,
         public label: string,
         public path: string,
         public mimetype: string,
     ) { }
     static from_data(data: ResponseAssetFileData) {
-        return new AssetFile(data.id, data.label, data.path, data.mimetype)
+        return new AssetFile(String(data.id), data.label, data.path, data.mimetype)
     }
 }

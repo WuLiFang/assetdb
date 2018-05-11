@@ -1,4 +1,5 @@
-import { Module, MutationTree, ActionTree } from 'vuex';
+import { Module, MutationTree, ActionTree, mapState, GetterTree, mapGetters } from 'vuex';
+import { DefaultComputed } from "vue/types/options";
 
 import * as _ from "lodash";
 import axios from "axios";
@@ -6,15 +7,38 @@ import axios from "axios";
 import { ResponseAssetData, } from '../interfaces';
 import { Asset, AssetStorage } from "../model";
 import * as MutationTypes from "../mutation-types";
-import { RootState } from './types'
+import { RootState, AssetState, AssetMetaData, RouteURLMap } from './types'
 
-export const state = {
-    storage: <AssetStorage>{},
+export const state: AssetState = {
+    storage: {},
+}
+
+const getters: GetterTree<AssetState, RootState> = {
+    assetMetaData(state): AssetMetaData {
+        let routeURLMap: RouteURLMap = {}
+        _.each(state.storage, i => routeURLMap[i.id] = `/asset/${i.id}/${i.name}`)
+        return {
+            routeURLMap
+        }
+
+    }
+}
+interface AssetComputedMixin extends DefaultComputed {
+    assetStore: () => AssetState
+    assetMetaData: () => AssetMetaData
+}
+
+export const assetComputedMinxin = <AssetComputedMixin>{
+    ...mapState(
+        ['assetStore']),
+    ...mapGetters(
+        ['assetMetaData'])
 }
 
 const mutations: MutationTree<typeof state> = {
     [MutationTypes.UPDATE_ASSETS](state, payload: MutationTypes.PayloadUpdateAssets) {
         payload.assets.forEach(value => state.storage[value.id] = value)
+        state.storage = { ...state.storage }
     },
     [MutationTypes.UPDATE_ASSET_RELATED_FILES](state, payload: MutationTypes.PayloadUpdateAssetRelatedFiles) {
         let asset = state.storage[payload.id]
@@ -55,6 +79,7 @@ const actions: ActionTree<typeof state, RootState> = {
 const module: Module<typeof state, RootState> =
     {
         state,
+        getters,
         mutations,
         actions
     }

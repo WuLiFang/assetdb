@@ -10,9 +10,9 @@ import * as _ from "lodash";
 
 import AssetCard from "./AssetCard.vue";
 
-import AssetUtil from "../asset-util";
 import { Category, Asset } from "../model";
 import * as mutations from "../mutation-types";
+import { assetComputedMinxin } from "../store/asset";
 
 export default Vue.extend({
   props: {
@@ -30,6 +30,9 @@ export default Vue.extend({
       fileList: []
     };
   },
+  computed: {
+    ...assetComputedMinxin
+  },
   watch: {
     category: function(newValue, oldValue) {
       this.updateAssets();
@@ -43,7 +46,7 @@ export default Vue.extend({
         .dispatch(mutations.UPDATE_ASSETS, payload)
         .then(response => {
           this.assets = _.filter(
-            AssetUtil.storage,
+            this.assetStore.storage,
             value => value.category_id == this.category.id
           );
           this.isLoading = false;

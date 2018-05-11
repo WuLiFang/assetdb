@@ -1,4 +1,4 @@
-import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
+import { Module, MutationTree, ActionTree, GetterTree, mapGetters, mapState } from 'vuex';
 import { DefaultComputed } from "vue/types/options";
 
 import * as _ from "lodash";
@@ -7,10 +7,10 @@ import axios from "axios";
 import { ResponseCategoryData } from '../interfaces';
 import { Category, CategoryStorage } from "../model";
 import * as MutationTypes from "../mutation-types";
-import { RootState, CategoryState, CategoryChildrenMap, CategoryRouteURLMap, CategoryMetaData, CategoryRecurseCountMap } from './types'
+import { RootState, CategoryState, CategoryMetaData, CategoryArrayMap, RouteURLMap, CountMap } from './types'
 import { taggedTemplateExpression } from 'babel-types';
 
-export const state: CategoryState = { storage: {} }
+export const state: CategoryState = { storage: {}, countMap: {} }
 
 interface TreeModel {
     id: string;
@@ -22,8 +22,8 @@ interface TreeModel {
 }
 
 
-function categoryChildrenMap(state: CategoryState): CategoryChildrenMap {
-    let ret: CategoryChildrenMap = {}
+function categoryChildrenMap(state: CategoryState): CategoryArrayMap {
+    let ret: CategoryArrayMap = {}
 
     let getCategoryChildren = (category: Category) => {
         return _.filter(state.storage, value => value.parent_id == category.id)
@@ -32,30 +32,30 @@ function categoryChildrenMap(state: CategoryState): CategoryChildrenMap {
     return ret
 }
 
-function categoryRouteURLMap(state: CategoryState): CategoryRouteURLMap {
-    let ret: CategoryRouteURLMap = {}
+function categoryRouteURLMap(state: CategoryState): RouteURLMap {
+    let ret: RouteURLMap = {}
     _.each(state.storage, category => ret[category.id] = `/category/${category.id}/${category.name}`)
     return ret
 }
 
-function categoryRecurseCountMap(state: CategoryState, childrenMap: CategoryChildrenMap): CategoryRecurseCountMap {
+function categoryRecurseCountMap(state: CategoryState, childrenMap: CategoryArrayMap): CountMap {
     let getRecurseCount = (category: Category): number => {
-        let count = category.count ? category.count : 0
+        let count = state.countMap[category.id] || 0
         return childrenMap[category.id].reduce((prev, current) => prev + getRecurseCount(current), count)
     }
-    let ret: CategoryRecurseCountMap = {}
+    let ret: CountMap = {}
     _.each(state.storage, item => ret[item.id] = getRecurseCount(item))
     return ret
 }
 
-export const getters: GetterTree<typeof state, RootState> = {
+export const getters: GetterTree<CategoryState, RootState> = {
     categoryMetaData: (state): CategoryMetaData => {
         let childrenMap = categoryChildrenMap(state)
         return {
             childrenMap,
             routeURLMap: categoryRouteURLMap(state),
             root: _.find(state.storage, value => !value.parent_id),
-            recurseCountMapp: categoryRecurseCountMap(state, childrenMap)
+            recurseCountMap: categoryRecurseCountMap(state, childrenMap)
         }
     },
 
@@ -64,7 +64,8 @@ export const getters: GetterTree<typeof state, RootState> = {
             if (parent.parent_id == child.id) {
                 return false
             }
-            let grandparent = state.storage[parent.parent_id]
+
+            let grandparent = parent.parent_id ? state.storage[parent.parent_id] : null
             return !grandparent || isValid(child, grandparent)
         }
         return isValid
@@ -72,17 +73,17 @@ export const getters: GetterTree<typeof state, RootState> = {
 
     getLogicalCategoryPath: (state) => (category: Category): Category[] => {
         let ret: Category[] = [];
-        let parent_id: number;
+        let parent_id: string | null;
         let parent: Category | undefined;
         let current = category
 
         while (current) {
             ret.push(current);
             parent_id = current.parent_id;
-            parent = state.storage[parent_id]
-            if (!parent) {
+            if (!parent_id) {
                 break
             }
+            parent = state.storage[parent_id]
             current = parent;
         }
         ret.reverse();
@@ -90,42 +91,40 @@ export const getters: GetterTree<typeof state, RootState> = {
     },
 
 }
-interface CategoryGetterMixin extends DefaultComputed {
-    rootCategory: () => Category | null
-    childrenMap: () => CategoryChildrenMap
-    routeURLMap: () => CategoryRouteURLMap
-    storage: () => CategoryStorage
-
+interface CategoryComputedMixin extends DefaultComputed {
+    categoryStore: () => CategoryState
+    categoryMetaData: () => CategoryMetaData
+    isValidCategoryRelationship: () => (child: Category, parent: Category) => Boolean
+    getLogicalCategoryPath: () => (category: Category) => Array<Category>
 }
-export const categoryGetterMinxin: CategoryGetterMixin = {
-    rootCategory(): Category | null {
-        return this.$store.getters.categoryMetaData.root;
-    },
-    childrenMap(): CategoryChildrenMap {
-        return this.$store.getters.categoryMetaData.childrenMap;
-    },
-    routeURLMap(): CategoryRouteURLMap {
-        return this.$store.getters.categoryMetaData.routeURLMap;
-    },
-    storage(): CategoryStorage {
-        return this.$store.state.category.storage;
-    }
-};
+
+export const categoryComputedMinxin = <CategoryComputedMixin>{
+    ...mapState(
+        ['categoryStore']
+    ),
+    ...mapGetters([
+        'categoryMetaData',
+        'isValidCategoryRelationship',
+        'getLogicalCategoryPath',
+    ])
+}
+
 const mutations: MutationTree<typeof state> = {
     [MutationTypes.UPDATE_CATEGORIES](state, payload: MutationTypes.PayloadUpdateCategories) {
-        let storage: CategoryStorage = {}
-        payload.categories.map(value => storage[value.id] = value)
-        state.storage = storage
+        if (_.difference(payload.categories.map(i => i.id), Object.keys(state.storage))) {
+            let storage: CategoryStorage = {}
+            let countMap: CountMap = {}
+            payload.categories.forEach(value => {
+                storage[value.id] = value
+                countMap[value.id] = null
+            })
+            state.storage = storage
+            state.countMap = countMap
+        }
+        payload.categories.forEach(i => state.storage[i.id] = i)
     },
-    [MutationTypes.SET_CATEGORY](state, payload: MutationTypes.PayloadSetCategory) {
-        let category = _.find(state.storage, value => value.id == payload.id)
-        if (!category) {
-            console.error('Set category failed, no such category.')
-            return
-        }
-        if (payload.count) {
-            category.count = payload.count
-        }
+    [MutationTypes.COUNT_CATEGORY](state, payload: MutationTypes.PayloadSetCategoryCount) {
+        state.countMap[payload.id] = payload.count
     },
 }
 
@@ -150,8 +149,11 @@ const actions: ActionTree<typeof state, RootState> = {
     async [MutationTypes.COUNT_CATEGORY](context, payload: MutationTypes.PayloadCategoryID) {
         return axios.get(`/api/category/${payload.id}/count`).then(
             response => {
-                let _payload: MutationTypes.PayloadSetCategory = { id: payload.id, count: response.data }
-                context.commit(MutationTypes.SET_CATEGORY, _payload)
+                let count: number | null = response.data
+                if (count) {
+                    let _payload: MutationTypes.PayloadSetCategoryCount = { id: payload.id, count }
+                    context.commit(MutationTypes.COUNT_CATEGORY, _payload)
+                }
             }
         )
     },

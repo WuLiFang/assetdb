@@ -11,16 +11,17 @@ import Vue from "vue";
 import axios from "axios";
 
 import { Asset } from "../model";
-import AssetUtil from "../asset-util";
+import { assetComputedMinxin } from "../store/asset";
 
 export default Vue.extend({
   props: { asset: { type: Asset } },
   data() {
-    return { isDeleted: false, AssetUtil };
+    return { isDeleted: false };
   },
   computed: {
+    ...assetComputedMinxin,
     routeURL(): string {
-      return AssetUtil.url(this.asset);
+      return this.assetMetaData.routeURLMap[this.asset.id];
     },
     thumbnailURL(): string | null {
       let id = this.asset.thumbnail_id;

@@ -1,6 +1,6 @@
 <template lang="pug">
   .root(v-if="category")
-    CategoryTree.left.hidden-xs-only2
+    CategoryTree.left(:category='category')
     .right
         CategoryBreadcrumb(:category="category")
         CategoryToolbar(:category="category" class='toolbar')
@@ -19,16 +19,16 @@ import CategoryTree from "./CategoryTree.vue";
 import CategoryToolbar from "./CategoryToolbar.vue";
 
 import { Category, CategoryStorage } from "../model";
-import { categoryGetterMinxin } from "../store/category";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   computed: {
-    ...categoryGetterMinxin,
+    ...categoryComputedMinxin,
     id(): number {
       return Number(this.$route.params.id);
     },
     category(): Category | undefined {
-      return this.storage[this.id];
+      return this.categoryStore.storage[this.id];
     }
   },
   components: {

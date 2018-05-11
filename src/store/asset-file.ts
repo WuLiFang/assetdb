@@ -1,22 +1,47 @@
-import { Module, MutationTree, ActionTree } from 'vuex';
+import { Module, MutationTree, ActionTree, GetterTree, mapState, mapGetters } from 'vuex';
+import { DefaultComputed } from "vue/types/options";
 
 import axios from "axios";
+import * as _ from "lodash";
 
 import { ResponseAssetFileData } from '../interfaces';
 import { AssetFileStorage, AssetFile } from "../model";
 import * as MutationTypes from "../mutation-types";
-import { RootState } from './types'
+import { RootState, AssetFileMetaData, AssetFileState, RouteURLMap } from './types'
 
-export const state: AssetFileStorage = {
+export const state: AssetFileState = {
+    storage: {}
 }
 
-const mutations: MutationTree<typeof state> = {
+const getters: GetterTree<AssetFileState, RootState> = {
+    assetFileMetaData(state): AssetFileMetaData {
+        let routeURLMap: RouteURLMap = {}
+        _.each(state.storage, i => routeURLMap[i.id] = `/file/${i.id}/${i.label}`)
+        return {
+            routeURLMap
+        }
+
+    }
+}
+interface AssetFileComputedMixin extends DefaultComputed {
+    assetFileStore: () => AssetFileState
+    assetFileMetaData: () => AssetFileMetaData
+}
+
+export const assetFileComputedMinxin = <AssetFileComputedMixin>{
+    ...mapState(
+        ['assetFileStore']),
+    ...mapGetters(
+        ['assetFileMetaData'])
+}
+
+const mutations: MutationTree<AssetFileState> = {
     [MutationTypes.UPDATE_ASSET_FILES](state, payload: MutationTypes.PayloadUpdateAssetFiles) {
-        payload.files.forEach(value => state[value.id] = value)
+        payload.files.forEach(value => state.storage[value.id] = value)
     },
 }
 
-const actions: ActionTree<typeof state, RootState> = {
+const actions: ActionTree<AssetFileState, RootState> = {
     async [MutationTypes.UPDATE_ASSET_FILES](context) {
         return axios.get('/api/file').then(
             response => {
@@ -51,9 +76,10 @@ const actions: ActionTree<typeof state, RootState> = {
     },
 }
 
-const module: Module<typeof state, RootState> =
+const module: Module<AssetFileState, RootState> =
     {
         state,
+        getters,
         mutations,
         actions
     }

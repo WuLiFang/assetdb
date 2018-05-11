@@ -23,8 +23,8 @@ import AssetCreationDialog from "./AssetCreationDialog.vue";
 
 import { Category, Asset } from "../model";
 import { ResponseAssetData } from "../interfaces";
-import CategoryUtil from "../category-util";
 import * as mutations from "../mutation-types";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   props: { category: { type: Category } },
@@ -36,10 +36,11 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...categoryComputedMinxin,
     allowDelete(): boolean {
       return (
-        CategoryUtil.getChildren(this.category).length === 0 &&
-        CategoryUtil.getRecurseCount(this.category) === 0
+        this.categoryMetaData.childrenMap[this.category.id].length === 0 &&
+        this.categoryMetaData.recurseCountMap[this.category.id] === 0
       );
     }
   },

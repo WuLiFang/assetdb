@@ -1,7 +1,7 @@
 <template lang="pug">
   el-breadcrumb(separator-class="el-icon-arrow-right")
     el-breadcrumb-item(v-for="i in relatedCategories" :key="i.id") 
-      router-link(:to="CategoryUtil.url(i)")
+      router-link(:to="categoryMetaData.routeURLMap[i.id]")
         span {{i.name}}
     slot
 </template>
@@ -11,23 +11,19 @@ import Vue from "vue";
 import * as _ from "lodash";
 
 import { CategoryStorage, Category } from "../model";
-import CategoryUtil from "../category-util";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   props: {
     category: { type: Category }
   },
   data() {
-    return {
-      CategoryUtil
-    };
+    return {};
   },
   computed: {
-    categories(): CategoryStorage {
-      return this.$store.state.categories;
-    },
+    ...categoryComputedMinxin,
     relatedCategories(): Category[] {
-      return CategoryUtil.getRelated(this.category);
+      return this.getLogicalCategoryPath(this.category);
     }
   }
 });
