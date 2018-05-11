@@ -5,6 +5,11 @@
     :titles="['全部文件', '当前文件']"
     filterable
   )
+    el-upload.right-footer(
+      slot='right-footer'
+      action='api/file'
+      :data='uploadData'
+    ) 上传新文件
 </template>
 
 <script lang="ts">
@@ -16,6 +21,7 @@ import { ElTransfer } from "element-ui/types/transfer";
 import { Asset } from "../model";
 import * as mutations from "../mutation-types";
 import { assetFileComputedMinxin } from "../store/asset-file";
+import { categoryComputedMinxin } from "../store/category";
 
 export default Vue.extend({
   props: {
@@ -29,6 +35,7 @@ export default Vue.extend({
   },
   computed: {
     ...assetFileComputedMinxin,
+    ...categoryComputedMinxin,
     computedSelected: {
       get: function(): Array<string> {
         return this.selected;
@@ -36,6 +43,13 @@ export default Vue.extend({
       set: function(value: Array<string>) {
         this.$emit("update:selected", value);
       }
+    },
+    uploadData() {
+      let path: string = this.categoryStore.storage[this.asset.category_id]
+        .path;
+      return {
+        path
+      };
     }
   },
   methods: {
@@ -58,3 +72,12 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.asset-file-transfer {
+  .right-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+</style>
