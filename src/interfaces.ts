@@ -1,4 +1,4 @@
-
+// Date interface for backend.
 export interface ResponseCategoryData {
     id: number,
     parent_id: number | null,

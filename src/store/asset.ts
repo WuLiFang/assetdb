@@ -6,12 +6,12 @@ import * as _ from "lodash";
 import axios from "axios";
 
 import { ResponseAssetData, } from '../interfaces';
-import { Asset, AssetStorage, AssetFile } from "../model";
+import { Asset, AssetStorage, AssetFile, Category } from "../model";
 import * as MutationTypes from "../mutation-types";
 import { RootState, AssetState, AssetMetaData, RouteURLMap, CombinedRootState } from './types'
 
 export const state: AssetState = {
-    storage: {},
+    storage: {}, fileMap: {}
 }
 
 const getters: GetterTree<AssetState, RootState> = {
@@ -22,23 +22,17 @@ const getters: GetterTree<AssetState, RootState> = {
             routeURLMap
         }
     },
-    getFiles: (state, getters: GetterTree<AssetState, RootState>, rootState: RootState) =>
-        (asset: Asset): Array<AssetFile> => {
-            return asset.fileIDArray.map(i => (<CombinedRootState>rootState).assetFileStore.storage[i])
-        }
 }
 interface AssetComputedMixin extends DefaultComputed {
     assetStore: () => AssetState
     assetMetaData: () => AssetMetaData
-    getFiles: () => (asset: Asset) => Array<AssetFile>
 }
 
 export const assetComputedMinxin = <AssetComputedMixin>{
     ...mapState(
         ['assetStore']),
     ...mapGetters(
-        ['assetMetaData',
-            'getFiles'])
+        ['assetMetaData'])
 }
 
 const mutations: MutationTree<typeof state> = {
@@ -46,12 +40,7 @@ const mutations: MutationTree<typeof state> = {
         payload.assets.forEach(value => Vue.set(state.storage, value.id, value))
     },
     [MutationTypes.UPDATE_ASSET_RELATED_FILES](state, payload: MutationTypes.PayloadUpdateAssetRelatedFiles) {
-        let asset = state.storage[payload.id]
-        if (!asset) {
-            console.warn(`Asset not found, id: ${payload.id}`)
-            return
-        }
-        asset.fileIDArray = payload.files.map(i => i.id)
+        Vue.set(state.fileMap, payload.id, payload.files)
     }
 }
 
@@ -78,6 +67,14 @@ const actions: ActionTree<typeof state, RootState> = {
             }
         )
     },
+    async [MutationTypes.EDIT_ASSET](context, payload: MutationTypes.PayloadEditAsset) {
+        return axios.put(`/api/asset/${payload.id}`, payload.data).then(
+            response => {
+                let updatePayload: MutationTypes.PayloadAssetID = { id: payload.id }
+                context.dispatch(MutationTypes.UPDATE_ASSET, updatePayload)
+            }
+        )
+    }
 
 }
 

@@ -66,17 +66,7 @@ export default Vue.extend({
       this.$emit("update:selected", newValue);
     },
     updateFiles() {
-      this.$store
-        .dispatch(mutations.UPDATE_ASSET_FILES)
-        .then(() => (this.data = this.getData()));
-    },
-    getData(): ElTransfer["data"] {
-      let storage = this.assetFileStore.storage;
-      return _.map(storage, value => ({
-        label: value.label,
-        key: value.id,
-        disabled: false
-      }));
+      this.$store.dispatch(mutations.UPDATE_ASSET_FILES);
     }
   },
   mounted() {

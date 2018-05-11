@@ -26,7 +26,6 @@ export interface AssetStorage {
 }
 
 export class Asset {
-    public fileIDArray: Array<string> = []
     constructor(
         public id: string,
         public category_id: string,

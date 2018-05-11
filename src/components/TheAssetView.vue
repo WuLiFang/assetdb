@@ -4,7 +4,7 @@
       el-tabs(tabPosition='right')
         el-tab-pane(label='查看')
           div.cards
-            FileCard(v-for="file in getFiles(asset)" :file="file" :key='file.id')
+            FileCard(v-for="file in files" :file="file" :key='file.id')
         el-tab-pane(label='管理')
           AssetManagePane(:asset='asset')
   div(v-else) {{placeholderText}}
@@ -19,7 +19,7 @@ import AssetDetail from "./AssetDetail.vue";
 import AssetManagePane from "./AssetManagePane.vue";
 import FileCard from "./FileCard.vue";
 
-import { Asset, AssetStorage } from "../model";
+import { Asset, AssetStorage, AssetFile } from "../model";
 import * as mutations from "../mutation-types";
 import { assetComputedMinxin } from "../store/asset";
 
@@ -35,6 +35,9 @@ export default Vue.extend({
     ...assetComputedMinxin,
     id(): string {
       return this.$route.params.id;
+    },
+    files(): AssetFile[] {
+      return this.assetStore.fileMap[this.id];
     }
   },
   methods: {

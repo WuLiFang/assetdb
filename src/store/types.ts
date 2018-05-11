@@ -20,6 +20,7 @@ export interface CategoryState {
 
 export interface AssetState {
     storage: AssetStorage
+    fileMap: IDMap<Array<AssetFile>>
 }
 export interface AssetFileState {
     storage: AssetFileStorage

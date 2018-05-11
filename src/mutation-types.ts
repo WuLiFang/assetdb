@@ -45,8 +45,8 @@ export interface PayloadEditAsset extends PayloadAssetID {
     data: {
         category_id?: string
         name?: string
-        files?: Array<number>
-        description?: string
+        files?: Array<string>
+        description?: string | null
     }
 }
 

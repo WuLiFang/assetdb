@@ -26,9 +26,12 @@ import * as mutations from "../mutation-types";
 import { assetComputedMinxin } from "../store/asset";
 import {
   PayloadUpdateAssetRelatedFiles,
-  UPDATE_ASSET_RELATED_FILES
+  UPDATE_ASSET_RELATED_FILES,
+  EDIT_ASSET,
+  PayloadEditAsset
 } from "../mutation-types";
 import { assetFileComputedMinxin } from "../store/asset-file";
+import { file } from "babel-types";
 
 export default Vue.extend({
   props: { asset: { type: Asset }, visible: { default: false } },
@@ -42,7 +45,9 @@ export default Vue.extend({
     ...assetFileComputedMinxin,
     selectedFiles: {
       get(): Array<string> {
-        return this.getFiles(this.asset).map(value => value.id);
+        return (this.assetStore.fileMap[this.asset.id] || []).map(
+          value => value.id
+        );
       },
       set(value: Array<string>) {
         let payload: PayloadUpdateAssetRelatedFiles = {
@@ -59,6 +64,21 @@ export default Vue.extend({
     },
     accept() {
       console.log(this.selectedFiles);
+      let payload: PayloadEditAsset = {
+        id: this.asset.id,
+        data: {
+          name: this.asset.name,
+          category_id: this.asset.category_id,
+          description: this.asset.description,
+          files: this.selectedFiles
+        }
+      };
+      this.$store
+        .dispatch(EDIT_ASSET, payload)
+        .then(() => {
+          this.$message({ message: "编辑成功", type: "success" });
+        })
+        .catch(err => this.$message({ message: String(err), type: "error" }));
       this.close();
     },
     reject() {

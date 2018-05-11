@@ -16,7 +16,8 @@ export default Vue.extend({
   computed: {
     ...assetComputedMinxin,
     tableData(): tableRowData[] {
-      return this.getFiles(this.asset).map(value => ({
+      let files = this.assetStore.fileMap[this.asset.id] || [];
+      return files.map(value => ({
         label: value.label,
         // size: 0,
         mimetype: value.mimetype,
