@@ -10,7 +10,6 @@ WORKDIR /assetdb
 
 RUN pipenv install --system --deploy
 ENV PYTHONPATH=lib
-ENV PYTHONIOENCODING=utf-8
 
 FROM build AS test
 
@@ -19,7 +18,6 @@ RUN set -ex && python -m pytest ./tests
 
 FROM build AS release
 
-ENV LANG=en_US.utf-8
 LABEL author="NateScarlet@Gmail.com"
 ENV ASSETDB_ENGINE_URI="sqlite:////var/db/assetdb.db"
 ENV ASSETDB_ROOT="/srv/assetdb"

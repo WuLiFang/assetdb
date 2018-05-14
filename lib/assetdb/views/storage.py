@@ -6,7 +6,7 @@ from .app import APP
 from ..database import session_scope, File, Asset
 
 
-@APP.route(f'/storage/<path:filename>')
+@APP.route(f'/storage/path/<path:filename>')
 def get_storage(filename):
     """Get storage file from filename.  """
     return send_from_directory(setting.ROOT, filename)

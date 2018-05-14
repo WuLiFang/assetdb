@@ -5,6 +5,7 @@ from pathlib import PurePath
 
 from . import setting, wsgi
 from .__about__ import __version__
+from .database import setup
 
 
 def main():
@@ -19,6 +20,7 @@ def main():
     args = parser.parse_args()
     if args.root:
         setting.ROOT = args.root.as_posix()
+    setup()
     wsgi.serve(address=('0.0.0.0', args.port or 80))
 
 

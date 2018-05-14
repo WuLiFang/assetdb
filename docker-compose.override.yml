@@ -4,11 +4,10 @@ services:
     build: '.'
     ports:
      - "60002:80"
-    volumes:
-      - '/srv/assetdb:/srv/assetdb'
     external_links:
       - sentry-server:sentry
     environment: 
-      # CSHEET_DEBUG: 1
+      # ASSETDB_DEBUG: 1
       SENTRY_DSN: ${SENTRY_DSN}
-    
+    volumes:
+      - /srv/assetdb:/srv/assetdb

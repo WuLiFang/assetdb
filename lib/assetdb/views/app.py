@@ -10,5 +10,9 @@ from .. import __about__
 
 APP = Flask(__about__.__name__)
 API = Api(APP, prefix='/api')
-SENTRY = Sentry(APP, logging=os.getenv('SENTRY_DSN'),
-                level=logging.WARNING)
+
+if os.getenv('ASSETDB_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    SENTRY = Sentry(APP, logging=bool(os.getenv('SENTRY_DSN')),
+                    level=logging.WARNING)

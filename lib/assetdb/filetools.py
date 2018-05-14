@@ -1,5 +1,6 @@
 """Tools for file operations.  """
 
+import os
 from pathlib import PurePath
 
 from . import exceptions, setting
@@ -18,13 +19,13 @@ def relpath(filename):
         PurePath: Relative path.
     """
 
-    path = PurePath(filename)
-    if path.is_absolute():
+    ret = PurePath(os.fsdecode(filename))
+    if ret.is_absolute():
         try:
-            return PurePath(path.relative_to(setting.ROOT))
+            return PurePath(ret.relative_to(setting.ROOT))
         except ValueError:
             raise exceptions.PathError(path)
-    return path
+    return ret
 
 
 def path(*other: (str, PurePath)) -> PurePath:
@@ -36,5 +37,5 @@ def path(*other: (str, PurePath)) -> PurePath:
 
     ret = PurePath(setting.ROOT)
     for i in other:
-        ret /= i
+        ret /= os.fsdecode(i)
     return ret

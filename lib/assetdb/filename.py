@@ -3,8 +3,8 @@
 
 import os
 import re
-import sys
 import string
+import sys
 
 
 def filter_filename(path, platform=None):

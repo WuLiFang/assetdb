@@ -44,6 +44,7 @@ class FileManage(Resource):
             return 'Filename already inuse', 409
 
         LOGGER.debug('New file, save to: %s', save_path)
+        Path(save_path.parent).mkdir(parents=True, exist_ok=True)
         args.file.save(save_path.as_posix())
 
         with database_session() as sess:
