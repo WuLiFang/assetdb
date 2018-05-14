@@ -58,6 +58,7 @@ class Asset(Resource):
         parser.add_argument('name')
         parser.add_argument('files', action='append')
         parser.add_argument('description')
+        parser.add_argument('thumbnail_id')
         args = parser.parse_args()
 
         with database_session() as sess:
@@ -65,6 +66,7 @@ class Asset(Resource):
 
             item.name = args.name or item.name
             item.category_id = args.category_id or item.category_id
+            item.thumbnail_id = args.thumbnail_id or item.thumbnail_id
             item.description = args.description or item.description
             if args.files:
                 files = sess.query(database.File).filter(

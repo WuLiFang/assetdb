@@ -75,6 +75,7 @@ const actions: ActionTree<typeof state, RootState> = {
             response => {
                 let updatePayload: MutationTypes.PayloadAssetID = { id: payload.id }
                 context.dispatch(MutationTypes.UPDATE_ASSET, updatePayload)
+                return response
             }
         )
     },

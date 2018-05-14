@@ -53,6 +53,7 @@ export interface PayloadEditAsset extends PayloadAssetID {
         name?: string
         files?: Array<string>
         description?: string | null
+        thumbnail_id?: string
     }
 }
 
