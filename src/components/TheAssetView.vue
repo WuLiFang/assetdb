@@ -62,12 +62,13 @@ export default Vue.extend({
           this.isLoading = false;
         })
         .catch((reason: AxiosError) => {
+          let message = reason.response ? reason.response.data : String(reason);
           this.$notify({
             title: "载入资产失败",
-            message: `${reason.name} ${reason.message}`,
+            message: message,
             type: "error"
           });
-          this.placeholderText = reason.message;
+          this.placeholderText = message;
           this.isLoading = false;
         });
     }
