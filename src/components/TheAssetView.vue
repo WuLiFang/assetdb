@@ -2,8 +2,7 @@
   .the-asset-view(v-loading="isLoading" v-if="asset")
       AssetDetail(:asset="asset")
       el-tabs(tabPosition='right')
-        el-tab-pane(label='查看')
-          div.cards
+        el-tab-pane.cards(label='查看')
             FileCard(v-for="file in files" :file="file" :key='file.id')
         el-tab-pane(label='管理')
           AssetManagePane(:asset='asset')
@@ -89,8 +88,25 @@ export default Vue.extend({
 .the-asset-view {
   display: flex;
   flex-flow: column;
-  .cards {
-    display: flex;
+  .el-tabs {
+    flex: 1;
+    position: relative;
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.the-asset-view {
+  .el-tabs__content {
+    position: absolute;
+    bottom: 0;
+    right: 70px;
+    top: 0;
+    left: 0;
+    overflow: auto;
   }
 }
 </style>

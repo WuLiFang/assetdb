@@ -57,6 +57,9 @@ export default Vue.extend({
   margin: auto;
   margin-top: 3px;
   .el-card {
+    img {
+      width: 100%;
+    }
     break-inside: avoid;
     word-wrap: break-word;
     margin-bottom: 10px;
