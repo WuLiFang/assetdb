@@ -45,6 +45,8 @@ class Asset(Resource):
 
         with database_session() as sess:
             item = _get_item(id_, sess)
+            if not item:
+                return make_response('资产不存在', 404)
             return item.serialize()
 
     @staticmethod
@@ -77,6 +79,8 @@ class Asset(Resource):
 
         with database_session() as sess:
             item = _get_item(id_, sess)
+            if not item:
+                return make_response('资产不存在', 404)
             sess.delete(item)
 
         return make_response('资产已删除')
