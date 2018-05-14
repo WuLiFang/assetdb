@@ -60,6 +60,7 @@ export default Vue.extend({
     flex: 1 1 auto;
     flex-flow: column;
     .category-assets-view {
+      margin: 5px;
       @media (min-width: $fullscreen-layout-min-width) {
         flex: 0 1 auto;
         overflow: auto;
