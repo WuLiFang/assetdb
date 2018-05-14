@@ -8,12 +8,9 @@ FROM base AS build
 COPY . /assetdb
 WORKDIR /assetdb
 
-# Install dependencies
 RUN pipenv install --system --deploy
-
-# Set environment
 ENV PYTHONPATH=lib
-ENV LANG=en_US.utf-8
+ENV PYTHONIOENCODING=utf-8
 
 FROM build AS test
 
@@ -22,6 +19,8 @@ RUN set -ex && python -m pytest ./tests
 
 FROM build AS release
 
+ENV LANG=en_US.utf-8
 LABEL author="NateScarlet@Gmail.com"
-CMD  ["-p", "80", "-r", "/srv/assetdb"]
-ENTRYPOINT ["python", "-m", "assetdb"]
+ENV ASSETDB_ENGINE_URI="sqlite:////var/db/assetdb.db"
+ENV ASSETDB_ROOT="/srv/assetdb"
+CMD  ["python", "-m", "assetdb"]

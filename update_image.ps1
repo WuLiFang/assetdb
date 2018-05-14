@@ -1,25 +1,17 @@
-$IMAGE = "assetdb"
-$CONTAINNER = "assetdb_server"
-$SENTRY_DSN = Get-Content .\SENTRY_DSN
 
-"# Setup"
+param (
+    [switch]$build = $false
+)
+
+$env:SENTRY_DSN = Get-Content .\SENTRY_DSN
+
 docker-machine env | Invoke-Expression
-
-if ((docker inspect -f="{{.Image}}" $CONTAINNER) -eq
-    (docker image inspect -f="{{.Id}}" $IMAGE)) {
-    "# No need to update."
-    docker start $CONTAINNER
-    exit
+if ($build) {
+    git clean -fdX *.pyc
+    npx webpack --mode production
+    docker-compose up -d --build
+    docker system prune -f
 }
-
-"# Update container"
-docker stop $CONTAINNER
-docker rm $CONTAINNER
-docker run -d `
-    -v /z:/z -v /srv/assetdb:/srv/assetdb `
-    -p 60001:80 `
-    --restart always `
-    --link sentry-server:sentry `
-    -e SENTRY_DSN=$SENTRY_DSN `
-    --name $CONTAINNER $IMAGE
-docker ps
+else {
+    docker-compose up -d
+}

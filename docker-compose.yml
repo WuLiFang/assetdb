@@ -1,0 +1,10 @@
+version: '3.5'
+services:
+  web:
+    image: 'assetdb'
+    volumes: 
+     - ${CSHEET_STORAGE:-/srv/assetdb}/srv:/srv/assetdb
+     - database:/var/db
+
+volumes:
+    database:

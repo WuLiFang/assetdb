@@ -1,6 +1,7 @@
 .venv/
 .vscode/
-.pytest_cache
+**/.pytest_cache/**
+**/__pycache__/**
 Documentation/
 node_modules/
 /src/

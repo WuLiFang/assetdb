@@ -12,6 +12,7 @@ import TheFileView from "./components/TheFileView.vue";
 import TheCategoryView from "./components/TheCategoryView.vue";
 import TheIndex from "./components/TheIndex.vue";
 import TheIndexView from "./components/TheIndexView.vue";
+import TheAdminView from "./components/TheAdminView.vue";
 
 import * as mutations from "./mutation-types";
 import _store from './store';
@@ -28,6 +29,7 @@ const routes = [
     { path: '/category/:id', component: TheCategoryView, alias: '/category/:id/:name' },
     { path: '/asset/:id', component: TheAssetView, alias: '/asset/:id/:name' },
     { path: '/file/:id', component: TheFileView, alias: '/file/:id/:name' },
+    { path: '/admin', component: TheAdminView },
 ]
 const router = new VueRouter({ routes })
 

@@ -73,23 +73,5 @@ export default Vue.extend({
   img {
     width: 100%;
   }
-  &:hover {
-    .toolbar {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-}
-.toolbar-container {
-  width: 100%;
-}
-.toolbar {
-  visibility: hidden;
-  position: absolute;
-  opacity: 0;
-  transition: ease-in 0.3s;
-  .el-button {
-    text-align: right;
-  }
 }
 </style>

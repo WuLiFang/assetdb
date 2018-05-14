@@ -3,15 +3,13 @@
 import logging
 import os
 
-from .. import exceptions, setting
+from . import core
+from .. import exceptions, mimecheck, setting
 from ..filetools import relpath
 from .asset import Asset
 from .category import Category
 from .core import session_scope
-from . import core
 from .file import File
-
-from .. import mimecheck
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +31,11 @@ def add_asset(filenames, session, name, category_id):
     files = []
     for i in filenames:
         path = relpath(i)
-        if session.query(File).filter(File.path == path).first():
+        try:
+            if session.query(File).filter(File.path == path).first():
+                continue
+        except UnicodeEncodeError:
+            LOGGER.error('Error during add asset', exc_info=True)
             continue
         item = File.add(path, session)
         files.append(item)
