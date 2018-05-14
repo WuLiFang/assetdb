@@ -1,0 +1,14 @@
+version: '3.5'
+services:
+  web:
+    ports:
+     - "60002:80"
+    external_links:
+      - sentry-server:sentry
+    restart: 'always'
+    environment: 
+      # ASSETDB_DEBUG: 1
+      ASSETDB_ROOT: /y/Assets_DataBase
+      SENTRY_DSN: ${SENTRY_DSN}
+    volumes:
+      - /y:/y
