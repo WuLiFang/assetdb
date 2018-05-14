@@ -74,8 +74,17 @@ const actions: ActionTree<typeof state, RootState> = {
                 context.dispatch(MutationTypes.UPDATE_ASSET, updatePayload)
             }
         )
+    },
+    async [MutationTypes.ADD_ASSET](context, payload: MutationTypes.PayloadAddAsset) {
+        return axios.post('/api/asset', payload).then(
+            response => {
+                let data = <ResponseAssetData>response.data
+                let assets = [Asset.from_data(data)];
+                let payload: MutationTypes.PayloadUpdateAssets = { assets }
+                context.commit(MutationTypes.UPDATE_ASSETS, payload)
+            }
+        )
     }
-
 }
 
 const module: Module<typeof state, RootState> =

@@ -41,6 +41,12 @@ export interface PayloadUpdateAssets {
 export interface PayloadUpdateAssetRelatedFiles extends PayloadAssetID {
     files: Array<AssetFile>
 }
+export interface PayloadAddAsset {
+    category_id: string
+    name: string
+    description: string
+}
+
 export interface PayloadEditAsset extends PayloadAssetID {
     data: {
         category_id?: string

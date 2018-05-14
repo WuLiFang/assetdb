@@ -15,6 +15,26 @@ def _get_item(id_, session) -> database.Asset:
     return session.query(database.Asset).get(id_)
 
 
+class AssetManage(Resource):
+    @staticmethod
+    def post():
+        parser = reqparse.RequestParser()
+        parser.add_argument('category_id', required=True)
+        parser.add_argument('name', required=True)
+        parser.add_argument('description')
+        args = parser.parse_args()
+
+        with database_session() as sess:
+            item = database.Asset(
+                name=args.name, category_id=args.category_id, description=args.description)
+            sess.add(item)
+            sess.commit()
+            return item.serialize()
+
+
+API.add_resource(AssetManage, '/asset')
+
+
 class Asset(Resource):
     """API for asset.  """
 

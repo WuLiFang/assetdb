@@ -11,8 +11,8 @@ from .core import database_session
 LOGGER = logging.getLogger(__name__)
 
 
-class Category(Resource):
-    """API for category.  """
+class CategoryManage(Resource):
+    """API for category management.  """
 
     @staticmethod
     def get():
@@ -39,10 +39,10 @@ class Category(Resource):
         return 'ok'
 
 
-API.add_resource(Category, '/category')
+API.add_resource(CategoryManage, '/category')
 
 
-class CategoryFromId(Resource):
+class Category(Resource):
     """API for category from id.  """
 
     @staticmethod
@@ -100,7 +100,7 @@ class CategoryFromId(Resource):
         return 'Deleted'
 
 
-API.add_resource(CategoryFromId, '/category/<id_>')
+API.add_resource(Category, '/category/<id_>')
 
 
 class CategoryAssets(Resource):
