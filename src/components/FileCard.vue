@@ -1,6 +1,6 @@
 <template lang="pug">
   el-card.file-card
-    FileDisplay(:file='file')
+    FileDisplay(:file='file' width='100%' height="100%")
     div {{file.name}}
 </template>
 
@@ -31,21 +31,11 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .file-card {
-  div {
-    display: inline-block;
-  }
+  display: inline-block;
   margin: auto;
-  margin-top: 3px;
+  margin: 5px;
   break-inside: avoid;
   word-wrap: break-word;
-  margin-bottom: 10px;
-  max-height: 100%;
   text-align: center;
-  &:hover {
-    .toolbar {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
 }
 </style>

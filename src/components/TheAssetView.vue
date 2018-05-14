@@ -2,10 +2,12 @@
   .the-asset-view(v-loading="isLoading" v-if="asset")
       AssetDetail(:asset="asset")
       el-tabs(tabPosition='right')
-        el-tab-pane.cards(label='查看')
-          a.pack(:href='`/storage/asset/${asset.id}`') 
-            el-button 打包下载
-          FileCard(v-for="file in files" :file="file" :key='file.id')
+        el-tab-pane(label='查看')
+          .pack
+            a(:href='`/storage/asset/${asset.id}`' download='`${asset.name}.zip`') 
+              el-button 打包下载
+          .cards
+            FileCard(v-for="file in files" :file="file" :key='file.id')
         el-tab-pane(label='管理')
           AssetManagePane(:asset='asset')
   div(v-else) {{placeholderText}}
@@ -93,13 +95,27 @@ export default Vue.extend({
   .el-tabs {
     flex: 1;
     position: relative;
-    .pack {
+    .el-tab-pane {
+      display: flex;
       position: absolute;
-      right: 0;
+      width: 100%;
+      top: 0;
+      bottom: 0;
+      flex-flow: column;
+    }
+    .pack {
+      display: flex;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+      margin: 0.3em;
+      a {
+        height: 100%;
+      }
     }
     .cards {
-      display: flex;
-      flex-wrap: wrap;
+      text-align: center;
+      flex: 1;
+      overflow: auto;
     }
   }
 }
@@ -112,7 +128,6 @@ export default Vue.extend({
     right: 70px;
     top: 0;
     left: 0;
-    overflow: auto;
   }
 }
 </style>
