@@ -3,7 +3,7 @@
     CategoryBreadcrumb(:category="parentCategory") 
       el-breadcrumb-item 
         span {{asset.name}}
-    div {{asset.description}}
+    .description {{asset.description}}
 </template>
 
 <script lang="ts">
@@ -33,8 +33,12 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.el-breadcrumb {
-  padding: 20px;
-  font-size: 1em;
+.asset-detail {
+  display: flex;
+  flex-flow: column;
+  .el-breadcrumb {
+    padding: 20px;
+    font-size: 1em;
+  }
 }
 </style>

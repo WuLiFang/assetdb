@@ -17,8 +17,12 @@ def _get_item(id_, session) -> database.Asset:
 
 
 class AssetManage(Resource):
+    """Asset management.  """
+
     @staticmethod
     def post():
+        """Create new asset.  """
+
         parser = reqparse.RequestParser()
         parser.add_argument('category_id', required=True)
         parser.add_argument('name', required=True)

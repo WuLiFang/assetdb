@@ -3,7 +3,9 @@
       AssetDetail(:asset="asset")
       el-tabs(tabPosition='right')
         el-tab-pane.cards(label='查看')
-            FileCard(v-for="file in files" :file="file" :key='file.id')
+          a.pack(:href='`/storage/asset/${asset.id}`') 
+            el-button 打包下载
+          FileCard(v-for="file in files" :file="file" :key='file.id')
         el-tab-pane(label='管理')
           AssetManagePane(:asset='asset')
   div(v-else) {{placeholderText}}
@@ -91,6 +93,10 @@ export default Vue.extend({
   .el-tabs {
     flex: 1;
     position: relative;
+    .pack {
+      position: absolute;
+      right: 0;
+    }
     .cards {
       display: flex;
       flex-wrap: wrap;
