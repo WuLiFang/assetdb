@@ -1,10 +1,12 @@
 """Assetdb RESTful API about asset.  """
 
 
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 from ... import setting
 from ..app import API
+
+from ...filename import filter_filename
 
 
 class Root(Resource):
@@ -13,7 +15,11 @@ class Root(Resource):
     @staticmethod
     def get():
         """Get root path.  """
-        return setting.ROOT
+        parser = reqparse.RequestParser()
+        parser.add_argument('platform')
+        args = parser.parse_args()
+
+        return filter_filename(setting.ROOT, None if not args.platform else args.platform.lower())
 
 
 API.add_resource(Root, '/root')
