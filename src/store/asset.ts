@@ -41,6 +41,9 @@ const mutations: MutationTree<typeof state> = {
     },
     [MutationTypes.UPDATE_ASSET_RELATED_FILES](state, payload: MutationTypes.PayloadUpdateAssetRelatedFiles) {
         Vue.set(state.fileMap, payload.id, payload.files)
+    },
+    [MutationTypes.DELETE_ASSET](state, payload: MutationTypes.PayloadAssetID) {
+        Vue.delete(state.storage, payload.id)
     }
 }
 
@@ -82,6 +85,14 @@ const actions: ActionTree<typeof state, RootState> = {
                 let assets = [Asset.from_data(data)];
                 let payload: MutationTypes.PayloadUpdateAssets = { assets }
                 context.commit(MutationTypes.UPDATE_ASSETS, payload)
+            }
+        )
+    },
+    async [MutationTypes.DELETE_ASSET](context, payload: MutationTypes.PayloadAssetID) {
+        return axios.delete(`/api/asset/${payload.id}`).then(
+            response => {
+                context.commit(MutationTypes.DELETE_ASSET, payload)
+                return response
             }
         )
     }

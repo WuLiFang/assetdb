@@ -2,6 +2,7 @@
 
 import logging
 
+from flask import make_response
 from flask_restful import Resource, reqparse
 
 from ... import database
@@ -68,7 +69,7 @@ class Asset(Resource):
                     database.File.id.in_(args.files)).all()
                 item.files = files
 
-        return 'ok'
+        return make_response('资产编辑成功')
 
     @staticmethod
     def delete(id_):
@@ -78,7 +79,7 @@ class Asset(Resource):
             item = _get_item(id_, sess)
             sess.delete(item)
 
-        return 'Deleted'
+        return make_response('资产已删除')
 
 
 API.add_resource(Asset, '/asset/<id_>')
