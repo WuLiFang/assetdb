@@ -1,13 +1,10 @@
 FROM python AS base
-
 ENV PIP_INDEX_URL https://mirrors.aliyun.com/pypi/simple
 RUN pip install pipenv && pipenv --version
 
 FROM base AS build
-
-COPY . /assetdb
 WORKDIR /assetdb
-
+COPY . .
 RUN pipenv install --system --deploy
 ENV PYTHONPATH=lib
 

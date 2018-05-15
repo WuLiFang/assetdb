@@ -1,6 +1,7 @@
 # -*- coding=UTF-8 -*-
 """Use filter to convert filename between diffrent filesystem.  """
 
+import locale
 import os
 import re
 import string
@@ -61,3 +62,21 @@ def get_filename_filters(platform=None):
         filters = ','.join(drive_letter_conv)
     filters += ','
     return filters
+
+
+def get_unicode(input_bytes, codecs=('UTF-8', 'GBK')):
+    """Return unicode string by try decode @input_bytes with @codecs.  """
+
+    if isinstance(input_bytes, str):
+        return input_bytes
+
+    input_bytes = bytes(input_bytes)
+    try:
+        return input_bytes.decode()
+    except UnicodeDecodeError:
+        for i in tuple(codecs) + (sys.getfilesystemencoding(), locale.getdefaultlocale()[1]):
+            try:
+                return str(input_bytes, i)
+            except UnicodeDecodeError:
+                continue
+    raise UnicodeDecodeError(input_bytes)

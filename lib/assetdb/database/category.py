@@ -8,6 +8,7 @@ from .. import setting
 from .core import Base, Path, SerializableMixin
 from .. import exceptions
 from ..filetools import relpath
+import os
 
 
 class Category(Base, SerializableMixin):
@@ -34,7 +35,7 @@ class Category(Base, SerializableMixin):
             name (str, optional): Defaults to None. Category name.
         """
 
-        dirpath = PurePath(dirpath)
+        dirpath = PurePath(os.fsdecode(dirpath))
         name = name or dirpath.name
 
         path = relpath(dirpath)

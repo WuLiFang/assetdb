@@ -10,7 +10,7 @@ from .asset import Asset
 from .category import Category
 from .core import session_scope
 from .file import File
-
+from ..filename import get_unicode as u
 LOGGER = logging.getLogger(__name__)
 
 
@@ -31,11 +31,7 @@ def add_asset(filenames, session, name, category_id):
     files = []
     for i in filenames:
         path = relpath(i)
-        try:
-            if session.query(File).filter(File.path == path).first():
-                continue
-        except UnicodeEncodeError:
-            LOGGER.error('Error during add asset', exc_info=True)
+        if session.query(File).filter(File.path == path).first():
             continue
         item = File.add(path, session)
         files.append(item)
@@ -80,7 +76,8 @@ def walk_root(dirpath_callback=(), filenames_callback=()):
     """Walk in root dir.  """
 
     with session_scope() as sess:
-        for dirpath, _, filenames in os.walk(setting.ROOT):
+        for dirpath, _, filenames in os.walk(setting.ROOT.encode('utf-8')):
+            dirpath = u(dirpath)
             for i in dirpath_callback:
                 i(dirpath, session=sess)
 
@@ -89,7 +86,8 @@ def walk_root(dirpath_callback=(), filenames_callback=()):
                 continue
 
             for i in filenames_callback:
-                i([os.path.join(dirpath, i) for i in filenames], session=sess)
+                i([os.path.join(dirpath, u(j))
+                   for j in filenames], session=sess)
 
 
 def setup():
@@ -100,8 +98,6 @@ def setup():
             Category.add(i, session)
         except exceptions.DuplicatePathError:
             pass
-        except UnicodeEncodeError:
-            LOGGER.error('Error during add category', exc_info=True)
 
     walk_root(dirpath_callback=(_add_category,),
               filenames_callback=(add_assets,))
