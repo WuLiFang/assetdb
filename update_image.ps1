@@ -3,6 +3,8 @@ param (
     [switch]$build = $false
 )
 
+Push-Location $PSScriptRoot
+
 $env:SENTRY_DSN = Get-Content .\SENTRY_DSN
 
 docker-machine env | Invoke-Expression
@@ -15,3 +17,5 @@ if ($build) {
 else {
     docker-compose up -d
 }
+
+Pop-Location
