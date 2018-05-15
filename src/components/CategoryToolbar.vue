@@ -92,7 +92,6 @@ export default Vue.extend({
 .category-toolbar {
   .el-button-group {
     display: flex;
-    align-items: stretch;
     flex-wrap: wrap;
     .el-button {
       flex: 1 1 auto;

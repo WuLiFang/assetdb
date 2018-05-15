@@ -52,7 +52,7 @@ export default Vue.extend({
   .left {
     flex: 0 0 30em;
     @media (min-width: $fullscreen-layout-min-width) {
-      flex: 1 0 auto;
+      flex: 0 0 auto;
     }
   }
   .right {
