@@ -100,6 +100,8 @@ def setup():
             Category.add(i, session)
         except exceptions.DuplicatePathError:
             pass
+        except UnicodeEncodeError:
+            LOGGER.error('Error during add category', exc_info=True)
 
     walk_root(dirpath_callback=(_add_category,),
               filenames_callback=(add_assets,))
