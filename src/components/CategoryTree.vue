@@ -114,6 +114,11 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .category-tree {
+  display: flex;
+  flex-direction: column;
+  .el-tree {
+    overflow: auto;
+  }
   .custom-tree-node {
     flex: 1;
     display: flex;
